@@ -1,9 +1,0 @@
-{
-  "name": "浪人",
-  "scripts": {
-    "build": "npx @11ty/eleventy"
-  },
-  "dependencies": {
-    "@11ty/eleventy": "latest"
-  }
-}
