@@ -1,0 +1,7 @@
+<pre>
+$ cat ~/.ssh/config
+Host github.com
+    User git
+    IdentitiesOnly yes
+    ProxyCommand nc -X 5 -x 127.0.0.1:9050 %h %p
+</pre>
