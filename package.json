@@ -1,6 +1,7 @@
 {
   "name": "浪人",
   "scripts": {
+    "start": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy",
     "new": "bash ./template.sh"
   },
