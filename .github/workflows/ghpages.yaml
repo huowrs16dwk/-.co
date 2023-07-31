@@ -34,4 +34,4 @@ jobs:
           cp -r $BUILD_DIR/* .
           git add .
           git commit -m "deploy"
-          git push
+          git push origin HEAD:gh-pages --force
