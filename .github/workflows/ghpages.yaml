@@ -23,15 +23,9 @@ jobs:
 
       - name: Build site
         run: npm run build
-      
+
       - name: Deploy to GitHub Pages
-        env:
-          BUILD_DIR: _site
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git checkout --orphan gh-pages
-          cp -r $BUILD_DIR/* .
-          git add .
-          git commit -m "deploy"
-          git push origin HEAD:gh-pages --force
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
