@@ -1,7 +1,8 @@
 {
   "name": "浪人",
   "scripts": {
-    "build": "npx @11ty/eleventy"
+    "build": "npx @11ty/eleventy",
+    "new": "bash ./template.sh"
   },
   "dependencies": {
     "@11ty/eleventy": "latest"
