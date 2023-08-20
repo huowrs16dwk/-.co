@@ -26,34 +26,27 @@
 <p>Now that you have your terminal emulator and font setup, let's dive right in.</p>
 <h2>getting started</h2>
 <p>listing files</p>
-<pre>
-	ls
-</pre>
+<pre><code>	ls
+</code></pre>
 <p>making a directory</p>
-<pre>
-	mkdir foo
-</pre>
+<pre><code>	mkdir foo
+</code></pre>
 <p>creating a new file</p>
-<pre>
-	touch foo/bar
-</pre>
+<pre><code>	touch foo/bar
+</code></pre>
 <p>changing into a directory</p>
-<pre>
-	cd foo
-</pre>
+<pre><code>	cd foo
+</code></pre>
 <p>going &quot;up&quot; a directory</p>
-<pre>
-	cd ..
-</pre>
+<pre><code>	cd ..
+</code></pre>
 <h2>file permissions</h2>
 <p>Lots of problems on linux systems have to do with file permissions. It's important to understand what file permissions are, how to read them, and how to change them.</p>
 <p>listing file permisisons:</p>
-<pre>
-	ls -l
-</pre>
+<pre><code>	ls -l
+</code></pre>
 <p>example: drwxr-xr-x foo bar</p>
-<pre>
-	d for directory
+<pre><code>	d for directory
 	rwx user permissions (user foo)
 	r-x group permissions (group bar)
 	r-x other permissions (anybody not foo and not in bar)
@@ -63,34 +56,29 @@
 	x for execute (for directories that means you can cd into it)
 
 	- means the permission is not present
-</pre>
+</code></pre>
 <p>you can change permisions with chmod:</p>
-<pre>
-	chmod u-w foo # remove write permissions from the user
+<pre><code>	chmod u-w foo # remove write permissions from the user
 	chmod g+w foo # add write permissions to the group
-</pre>
+</code></pre>
 <p>each rwx group can also be represented as a number</p>
-<pre>
-	- = 0
+<pre><code>	- = 0
 	r = 4
 	w = 2
 	x = 1
-</pre>
+</code></pre>
 <p>And you can add these numbers together, for instance 7 for rwx</p>
 <p>You can also change permisions using numbers</p>
-<pre>
-	chmod 755 foo
-</pre>
+<pre><code>	chmod 755 foo
+</code></pre>
 <p>You can change the user and group (owner) of a file with chown:</p>
-<pre>
-	chown baz:qux foo   # change the user to baz
+<pre><code>	chown baz:qux foo   # change the user to baz
 			            # change the group to qux
                         # on the file (or directory) foo
-</pre>
+</code></pre>
 <h2>variables</h2>
 <p>Your shell is effectively a programming environment.  You can set variables and print variables. This can be very useful, let's take a look at some examples:</p>
-<pre>
-	export x=foo # set the varible x to foo
+<pre><code>	export x=foo # set the varible x to foo
 		     # export effectively makes it a global variable
 		     # this means it can be used by other programs
 
@@ -99,10 +87,9 @@
 	cd $x        # use the x variable and cd into the directory
 
 	printenv	# print all the current variables
-</pre>
+</code></pre>
 <p>String Variables:</p>
-<pre>
-	fred='/Bin/Path/Fred.txt'
+<pre><code>	fred='/Bin/Path/Fred.txt'
 
 	echo ${fred:e}     # txt
 	echo ${fred:t}     # Fred.txt
@@ -115,29 +102,26 @@
 	echo ${fred:t:r:u} # FRED
 	echo ${fred:5:4}   # Path
 	echo ${fred::-4}   # /Bin/Path/Fred
-</pre>
+</code></pre>
 <p>Numeric Variables:</p>
-<pre>
-	port=80
+<pre><code>	port=80
 	echo $port             # 80
 	echo ${port}1          # 801
 	echo $(( port+1 ))     # 81
-</pre>
+</code></pre>
 <p>Variable Expansion:</p>
-<pre>
-	export one=1; export two=2
+<pre><code>	export one=1; export two=2
 
 	# single quotes, no expansion
 	echo '$one\t$two'
 	$one\t$two
 
 	# double quotes expand variables
-	echo "$one\t$two"
+	echo &quot;$one\t$two&quot;
 	1       2
-</pre>
+</code></pre>
 <p>Conventional Variables:</p>
-<pre>
-	$USER            # the current user login name
+<pre><code>	$USER            # the current user login name
 	$HOME            # the current user’s home directory
 	$PWD             # the current working directory
 	$PATH            # list of folders searched to resolve commands
@@ -146,128 +130,108 @@
 	$RPROMPT         # the right shell prompt
 
 	$EDITOR          # the default editor to use
-</pre>
+</code></pre>
 <h2>ls colors</h2>
 <p>You can get a directory listing with color and decorators:</p>
-<pre>
-	ls --color -FG
-</pre>
+<pre><code>	ls --color -FG
+</code></pre>
 <p>If you don't like your colors, you can customize them with the LS_COLORS variable</p>
-<pre>
-	man dircolors
-	dircolors -b > .zshrc.d/ls-colors.sh
-</pre>
+<pre><code>	man dircolors
+	dircolors -b &gt; .zshrc.d/ls-colors.sh
+</code></pre>
 <p>Here is an example of what I use:</p>
-<pre>
-	LS_COLORS='rs=0:di=01;33:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:';
-</pre>
+<pre><code>	LS_COLORS='rs=0:di=01;33:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:';
+</code></pre>
 <h2>configuring your shell</h2>
 <p>both bash and zsh offer incredibly powerful user prompts. The &quot;prompt&quot; is the stuff that is printed before you get to type at the begining of the line.</p>
 <p>The most basic prompt is a simple $</p>
 <p>The default prompt on your system is probably something like this:</p>
-<pre>
-    [user@host ~]
-</pre>
+<pre><code>    [user@host ~]
+</code></pre>
 <p>The ~ is a special character, it represents your home folder. If you were to change directories, you'd see the prompt update</p>
 <p>You can change the prompt by changing the <code>PS1</code> variable</p>
-<pre>
-	export PS1='[\u@\h \w]\n\$ '
+<pre><code>	export PS1='[\u@\h \w]\n\$ '
 
 	\u is the current user
 	\h is the current host
 	\w is the current directory (full path)
 	\n is a line feed
 	\$ is a $ for regular users and a # for root
-</pre>
+</code></pre>
 <h2>getting help</h2>
 <p>I don't have all the prompt values memorized, but I can look them up in the manual.</p>
-<pre>
-	man bash
-</pre>
+<pre><code>	man bash
+</code></pre>
 <p>This opens up the user manual for bash, you can search with the <code>/</code> key. Try searching for &quot;PROMPTING&quot;</p>
-<pre>
-	/prompting
-</pre>
+<pre><code>	/prompting
+</code></pre>
 <p>You can step to the next search result hit with the <code>n</code> key. To quit, press <code>q</code></p>
 <p>For a quick one line summary, you can use the whatis command:</p>
-<pre>
-	whatis shuf
+<pre><code>	whatis shuf
 	shuf (1)             - generate random permutations
-</pre>
+</code></pre>
 <h2>editing files</h2>
 <p>Most systems come with an editor of some kind preinstalled.  nano, vim and emacs are the most common.  I will do a separate tutorial on vim.  Nano works like most text editors you are already familiar with.</p>
-<pre>
-	nano bar
-</pre>
+<pre><code>	nano bar
+</code></pre>
 <p>You can change your default editor by setting the EDITOR variable</p>
-<pre>
-	export EDITOR=vim
-</pre>
+<pre><code>	export EDITOR=vim
+</code></pre>
 <ul>
 <li><a href="https://www.openvim.com/">interactive vim tutorial</a></li>
 </ul>
 <h2>saving things for next time</h2>
 <p>You probably don't want to have to change your editor or update your prompt variables every time you launch a shell.  Each shell has some special files you can use to run commands automatically when you login to your shell.  For bash, the most common file is ~/.bashrc and for zsh it is ~/.zshrc</p>
 <p>Files that start with <code>.</code> are &quot;hidden&quot; files.  To see them, you need to pass a flag to the ls command telling it you want to see hidden files.</p>
-<pre>
-	cd ~
+<pre><code>	cd ~
 	ls -a
 	nano .bashrc
-</pre>
+</code></pre>
 <p>Inside this file, you can add whatever commands you want, and they will run each time you start a new shell.</p>
 <h2>aliasing</h2>
 <p>One of the most common things people like to do is create &quot;aliases&quot; for various commands so they don't have to type long ones, they can instead type a short alias.</p>
-<pre>
-	alias ll='ls -l'
+<pre><code>	alias ll='ls -l'
 	alias la='ls -a'
 	alias f='find'
 	alias grin='grep -iRn'
-</pre>
+</code></pre>
 <p>You can also override the defaults for a command by using the same name:</p>
-<pre>
-	alias nl='nl -ba'
-</pre>
+<pre><code>	alias nl='nl -ba'
+</code></pre>
 <p>To remove an alias, you can use the unalias command:</p>
-<pre>
-	unalias grin
-</pre>
+<pre><code>	unalias grin
+</code></pre>
 <p>To run the raw command one time without unaliasing it, you can prefix it with backslash \</p>
-<pre>
-	\nl < foo.txt
-</pre>
+<pre><code>	\nl &lt; foo.txt
+</code></pre>
 <h2>functions</h2>
 <p>If you have a complicated command that is too big for an alias, but too small to warrent it's own script file, you may want to consider defining a function for it.</p>
-<pre>
-	function lowercase() {
-	  awk "{ print tolower(\$0) }"
+<pre><code>	function lowercase() {
+	  awk &quot;{ print tolower(\$0) }&quot;
 	}
 
 	function uppercase() {
-	  awk "{ print toupper(\$0) }"
+	  awk &quot;{ print toupper(\$0) }&quot;
 	}
-</pre>
+</code></pre>
 <p>You can use the $@ notation to pass through all the parameters at once:</p>
-<pre>
-	function rank() {
+<pre><code>	function rank() {
 	  cat $@ | sort | uniq -c | sort -nr
 	}
-</pre>
+</code></pre>
 <h2>running multiple commands</h2>
 <p>You can run multiple commands by separating them with <code>;</code></p>
-<pre>
-	echo foo; echo bar
-</pre>
+<pre><code>	echo foo; echo bar
+</code></pre>
 <h2>pipes and redirection</h2>
 <p>The pipe <code>|</code> operator is very useful.  Using it, you can string multiple sets of commands together.</p>
-<pre>
-	cat file.log | sort | uniq
-</pre>
+<pre><code>	cat file.log | sort | uniq
+</code></pre>
 <p>In this example, we view the contents of file.log and then sort it, then select only the unique lines from it.</p>
 <h2>common commands</h2>
 <p>Here are some of the most common commands available on all *nix systems.  Take a look at the man pages and poke around.  Think of ways you can string them together with <code>;</code> and <code>|</code>.</p>
 <p>In no particular order:</p>
-<pre>
-	man (1)              - an interface to the system reference manuals
+<pre><code>	man (1)              - an interface to the system reference manuals
 	wc (1)               - print newline, word, and byte counts for each file
 	nl (1)               - number lines of files
 	date (1)             - print or set the system date and time
@@ -303,13 +267,12 @@
 	du (1)               - estimate file space usage
 	find (1)             - search for files in a directory hierarchy
 	tput (1)             - initialize a terminal or query terminfo database
-</pre>
+</code></pre>
 <p>And if you install the &quot;moreutils&quot; package, you'll get these:</p>
 <ul>
 <li><a href="https://joeyh.name/code/moreutils/">moreutils</a></li>
 </ul>
-<pre>
-    chronic: runs a command quietly unless it fails
+<pre><code>    chronic: runs a command quietly unless it fails
     combine: combine the lines in two files using boolean operations
     errno: look up errno names and descriptions
     ifdata: get network interface info without parsing ifconfig output
@@ -324,10 +287,9 @@
     vidir: edit a directory in your text editor
     vipe: insert a text editor into a pipe
     zrun: automatically uncompress arguments to command
-</pre>
+</code></pre>
 <p>You can find more by looking in your $PATH variable.  Let's take a look at all the places the shell looks for programs:</p>
-<pre>
-	echo $PATH | tr ':' '\n'
+<pre><code>	echo $PATH | tr ':' '\n'
 
 	/usr/local/sbin
 	/usr/local/bin
@@ -335,11 +297,10 @@
 	/usr/bin/site_perl
 	/usr/bin/vendor_perl
 	/usr/bin/core_perl
-</pre>
+</code></pre>
 <p>When you try to access a program, this is where your shell is looking to find it.  If it's not in one of these folders, it won't be able to find it.  In fact, it looks at these in order, so if you wanted to have a different version of a command be the default, you could make sure that your local path in your home directory is searched first.  Let's do that.</p>
-<pre>
-	export PATH="${HOME}/.bin:${PATH}"
-</pre>
+<pre><code>	export PATH=&quot;${HOME}/.bin:${PATH}&quot;
+</code></pre>
 <p>Remember, if you want this to stick around, you'll need to add it to your ~/.bashrc or ~/.zshrc</p>
 <p>A couple of things going on here that are interesting.</p>
 <ul>
@@ -350,37 +311,34 @@
 <p>Cool right? Now we have a local folder in our home directory where we can install more programs and we never have to worry about having extra permissions on the system or cluttering up /usr and /bin directories with personal programs.  These can be programs that we write, or programs we got from the internet.</p>
 <h2>streams, indirection and redirection</h2>
 <p>We already talked about the basics of redirecting output to a file with the &gt; operator, but what if you wanted to read in files, or diff the output from two different commands?</p>
-<pre>
- 	# stream the output of cat to jq as input
+<pre><code> 	# stream the output of cat to jq as input
 	cat foo.json | jq
 
 	# same thing, read the foo.json file and send it to jq stdin
-	jq < foo.json
+	jq &lt; foo.json
 	
 	# write a file creating or overwriting whatever is there
-	echo "hello" > file1
+	echo &quot;hello&quot; &gt; file1
 
 	# write to a file, appending to the end of it
-	echo "world" >> file1
+	echo &quot;world&quot; &gt;&gt; file1
 
 	# read in foo.json, grep for title, redirect any errors to /dev/null
-	grep title 2>/dev/null < foo.json
+	grep title 2&gt;/dev/null &lt; foo.json
 	
 	# generate two randomized lists of numbers from 1-10 and compare them
-	diff <(seq 10 | shuf) <(seq 10 | shuf)
+	diff &lt;(seq 10 | shuf) &lt;(seq 10 | shuf)
 
 	# do the install only if make succeeds
-	make && make install
-</pre>
+	make &amp;&amp; make install
+</code></pre>
 <h2>basic scripting techniques</h2>
 <p>Let's write a basic script.  We can print the latest news headlines for example.  First, we will need a way to parse html.  Let's install pup to our ~/.bin folder that we setup earlier.</p>
-<pre>
-	curl -s -L https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip | zcat > ~/.bin/pup
-</pre>
+<pre><code>	curl -s -L https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip | zcat &gt; ~/.bin/pup
+</code></pre>
 <p>This uses curl to fetch the file and output it to standard out.  We then pipe that into zcat standard in, and zcat decompresses the file to standard out. Then we take that and &quot;arrow&quot; it using the &gt; to the ~/.bin/pup file on the file system.</p>
 <p>Now that we have the pup command, in order to use it we have to give ourselves permission to execute it.  Remember chmod?</p>
-<pre>
-	chmod u+x ~/.bin/pup
+<pre><code>	chmod u+x ~/.bin/pup
 
 Now that we can use the program, let's scrape some news headlines.
 
@@ -388,11 +346,10 @@ Now that we can use the program, let's scrape some news headlines.
 
 That grabs headlines and links, but it's not very nice to look at.  Let's see if we can clean up the output.  Since we are working with web data, it's also useful to have jq.  So I've also installed that.
 
-	curl -s https://news.ycombinator.com/ | pup 'table table tr:nth-last-of-type(n+2) td.title a json{}' | jq -r '.[] | {text,href} | select (.text !=null) | "\(.text)\n\(.href)\n\n"'
-</pre>
+	curl -s https://news.ycombinator.com/ | pup 'table table tr:nth-last-of-type(n+2) td.title a json{}' | jq -r '.[] | {text,href} | select (.text !=null) | &quot;\(.text)\n\(.href)\n\n&quot;'
+</code></pre>
 <p>Wow, that's one heck of a command.  Let's see if we can break it up a little bit and figure out what's going on.</p>
-<pre>
-	curl # fetch something from the web
+<pre><code>	curl # fetch something from the web
 	-s	# silently
 	...	# url to fetch
 	| 	# pipe stdout to stdin
@@ -402,93 +359,76 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	jq	# process json
 	-r	# print the raw value of the string
 	...	# select the text and href fields where text is not null
-</pre>
+</code></pre>
 <p>If you look closely, jq supports it's own pipes.  All of that is one big long string passed to jq to process the json output. You can find more about the pup and jq syntax in their respective documentation.</p>
 <p>Let's turn it into a script that we can call any time we want, save this as headlines.sh</p>
-<pre>
-	#!/usr/bin/env bash
+<pre><code>	#!/usr/bin/env bash
 	
 	html=$(curl -s https://news.ycombinator.com/)
 	json=$(echo $html |  pup 'table table tr:nth-last-of-type(n+2) td.title a json{}')
-	echo $json | jq -r '.[] | {text,href} | select (.text !=null) | "\(.text)\n\(.href)\n\n"'
-</pre>
+	echo $json | jq -r '.[] | {text,href} | select (.text !=null) | &quot;\(.text)\n\(.href)\n\n&quot;'
+</code></pre>
 <p>Now we can save that file, chmod +x the file, and then we can run it any time and get headlines at our terminal.</p>
 <p>The foo=$(bar) notation runs the bar command and saves the output to foo.  You can then use that $foo from anywhere.</p>
 <p>That funny little syntax at the top is important.  The &quot;shebang&quot; #! is read by the shell and it's used to identify what program to use to run your script.  In this case it runs the env command and passes it bash creating an isolated environment for the script. The #! must be the first two characters on the first line of the script for it to work.  Without this, you wouldn't be able to make the script executable and run it.  You would need to call the program yourself like this:</p>
-<pre>
-	bash headlines.sh
-</pre>
+<pre><code>	bash headlines.sh
+</code></pre>
 <p>When writing scripts, it's common to have conditionals like &quot;if this directory is empty&quot; or &quot;if this file exists&quot;.</p>
-<pre>
-	if [ -s $f ]
+<pre><code>	if [ -s $f ]
 	then
         	# $f exists and has a size greater than zero
 	fi
-</pre>
+</code></pre>
 <p>The &quot;test&quot; command can also be used</p>
-<pre>
-	 test $? -eq 0 && echo "success"
-</pre>
+<pre><code>	 test $? -eq 0 &amp;&amp; echo &quot;success&quot;
+</code></pre>
 <p>The test man page has more examples</p>
-<pre>
-	man test
-</pre>
+<pre><code>	man test
+</code></pre>
 <h2>jobs</h2>
 <p>Sometimes you have a long running process and you want to run it in the background.  There is a basic job system included in the shell for just that.  One way of forking a job to the background is using the &amp; operator.</p>
-<pre>
-	sleep 60 &
-</pre>
+<pre><code>	sleep 60 &amp;
+</code></pre>
 <p>The <code>&amp;</code> operator forks the process into the background.  You can continue to use your shell and when the command is complete it will notify you it's done at your prompt.</p>
 <p>You can see a list of all your jobs using the jobs command</p>
-<pre>
-	 jobs
-	[1]+  Running                 sleep 60 &
-</pre>
+<pre><code>	 jobs
+	[1]+  Running                 sleep 60 &amp;
+</code></pre>
 <p>You can bring a job to the foreground with the 'fg' command.</p>
-<pre>
-	fg 1
-</pre>
+<pre><code>	fg 1
+</code></pre>
 <p>You can cancel the current foreground job with ctrl+c</p>
-<pre>
-	sleep 60
+<pre><code>	sleep 60
 	^C
-</pre>
+</code></pre>
 <p>You can suspend the current command with ctrl+z</p>
-<pre>
-	$ sleep 60
+<pre><code>	$ sleep 60
 	^Z
 	[1]+  Stopped                 sleep 60
-</pre>
+</code></pre>
 <p>Once a process is suspended, you can background it with the bg command</p>
-<pre>
-	$ bg 1
-	[1]+ sleep 60 &
-</pre>
+<pre><code>	$ bg 1
+	[1]+ sleep 60 &amp;
+</code></pre>
 <p>One way I like to deal with long running programs is to use the terminal bell.</p>
-<pre>
-	 alias bell="echo -n $'\a'"
-</pre>
+<pre><code>	 alias bell=&quot;echo -n $'\a'&quot;
+</code></pre>
 <p>Then I can run jobs and put a bell at the end:</p>
-<pre>
-	curl -s really-large-file ; bell 
-</pre>
+<pre><code>	curl -s really-large-file ; bell 
+</code></pre>
 <p>This works with the job system where you can ctrl+z and then bg the job, when it's complete you'll get a terminal bell.</p>
 <p>You can wait for a job to complete with the wait command</p>
-<pre>
-	wait %1
-</pre>
+<pre><code>	wait %1
+</code></pre>
 <p>If you want to leave a program running and logout, you can &quot;disown it&quot;</p>
-<pre>
-	nohup sleep 60
-</pre>
+<pre><code>	nohup sleep 60
+</code></pre>
 <p>You can also fork and disown a process using the &amp;! notation</p>
-<pre>
-	sleep 60 &!
-</pre>
+<pre><code>	sleep 60 &amp;!
+</code></pre>
 <h2>command history and shortcuts</h2>
 <p>Your command history is saved to ~/.bash_history or ~/.zsh_history.  You can view and search it whenever you like.</p>
-<pre>
-	# view command history
+<pre><code>	# view command history
 	history
 
 	# search for a command in your history
@@ -496,10 +436,9 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 
 	# edit the current command in $EDITOR
 	CTRL+X, CTRL+e
-</pre>
+</code></pre>
 <p>The special variable $? shows the return code of the previous command</p>
-<pre>
-	sleep 1
+<pre><code>	sleep 1
 	echo $?
 	0
 
@@ -507,28 +446,25 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	^C
 	echo $?
 	130
-</pre>
+</code></pre>
 <p>You can use this variable in your prompt to automatically get more information about why a command has failed.</p>
 <h2>switching to zsh</h2>
 <p>Your default shell is probably bash, but if you want to get the most out of your terminal session you may want to consider zsh.  Zsh is relatively newer and has some quality of life improvements.</p>
-<pre>
-	Bourne-again shell (bash 1989)
+<pre><code>	Bourne-again shell (bash 1989)
 	+ Korn shell (ksh 1983)
 	+ TENEX C shell (tcsh 1981)
 	=
 	Zee shell (zsh 1990)
-</pre>
+</code></pre>
 <p>How you get zsh is going to depend on your operating system and package management.</p>
 <ul>
 <li><a href="https://distrowatch.com/dwres.php?resource=package-management">Package Management Cheatsheet</a></li>
 </ul>
 <p>To switch your shell over to using zsh, you'll need to use the chsh command</p>
-<pre>
-	chsh -s /bin/zsh
-</pre>
+<pre><code>	chsh -s /bin/zsh
+</code></pre>
 <p>If you don't do anything, the next time you login zsh will prompt you for some information and auto generate some dotfiles for you.  Let's talk a bit more about dotfiles. Your dotfiles are run in a very specific order:</p>
-<pre>
-	set the command search path, environment variables
+<pre><code>	set the command search path, environment variables
 	.zshenv
 
 	setup for login shells
@@ -542,21 +478,19 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 
 	run commands when the shell exits like `clear`
 	.zlogout
-</pre>
+</code></pre>
 <p>All of these files are optional</p>
 <p>I like to keep my shell configuration organized in folders.  Here is an example of my .zprofile:</p>
-<pre>
-	for f (~/.zshrc.d/**/*.sh) {
+<pre><code>	for f (~/.zshrc.d/**/*.sh) {
 	   source $f
 	}
 
 	source ~/.zsh-keybindings
 	source ~/.zsh-prompt
-</pre>
+</code></pre>
 <p>This loops over all the files in all the sub-directories of my ~/.zshrc.d and sources them one by one.  This way I can have different files for different things.</p>
 <p>Here is an example layout:</p>
-<pre>
-	tree ~/.zshrc.d
+<pre><code>	tree ~/.zshrc.d
 	├── clients                    # client specific details like ssh tunneling info, variables, etc
 	│   ├── customer1.sh
 	│   └── customer2.sh
@@ -571,15 +505,14 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	    ├── git.sh
 	    ├── heroku.sh
 	    └── virtualbox.sh
-</pre>
+</code></pre>
 <p>You can organize this however you like, by client, by command, by programming language, by customer, by environment, all of the files will be sourced when you login it's really more about making it more managable for yourself to edit and update these things instead of having a 10000 line long zshrc file that you have to dig through.</p>
 <ul>
 <li><a href="https://zsh.sourceforge.io/FAQ/">zsh faq</a></li>
 <li><a href="https://manpages.org/zshbuiltins">zsh builtins</a></li>
 </ul>
 <p>One of the unique features of zsh is a &quot;right prompt&quot;.  You can set the RPROMPT variable just like you would the PS1 or PROMPT variable but the value will display on the right hand side. It's handy for error codes and repository information.  Here's an example right prompt that shows git status:</p>
-<pre>
-	# Color shortcuts
+<pre><code>	# Color shortcuts
 	RED=$fg[red]
 	MAGENTA=$fg[magenta]
 	YELLOW=$fg[yellow]
@@ -595,28 +528,28 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	RESET_COLOR=$reset_color
 
 	# icons
-	PROMPT_CHARACTER="»"
-	ERRORICON="☠"
-	GITICON="%{$WHITE_BOLD%}\xc2\xb1%{$RESET_COLOR%}"
+	PROMPT_CHARACTER=&quot;»&quot;
+	ERRORICON=&quot;☠&quot;
+	GITICON=&quot;%{$WHITE_BOLD%}\xc2\xb1%{$RESET_COLOR%}&quot;
 
 	function testok {
 	  RETVAL=$?
 	  if [[ $RETVAL -ne 0 ]]; then
-	    echo -e "${ERRORICON} %{$RED_BOLD%} $RETVAL %{$RESET_COLOR%} "
+	    echo -e &quot;${ERRORICON} %{$RED_BOLD%} $RETVAL %{$RESET_COLOR%} &quot;
 	  fi
 	}
 
 	precmd () {
 	  # sets the tab title to current dir
-	  print -Pn "\e]2;%~\a"
+	  print -Pn &quot;\e]2;%~\a&quot;
 
 	  # command timer
-	  (( _start >= 0 )) && set -A _elapsed $_elapsed $(( SECONDS-_start ))
+	  (( _start &gt;= 0 )) &amp;&amp; set -A _elapsed $_elapsed $(( SECONDS-_start ))
 	  _start=-1
 	}
 
 	preexec () {
-	  (( $#_elapsed > 10 )) && set -A _elapsed $_elapsed[-10,-1]
+	  (( $#_elapsed &gt; 10 )) &amp;&amp; set -A _elapsed $_elapsed[-10,-1]
 	  typeset -ig _start=SECONDS
 	}
 
@@ -624,19 +557,19 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	  seconds=${_elapsed[-1]}
 
 	  if [[ 0 -ne $seconds ]]; then
-	    echo -en "%{$BLUE_BOLD%}${seconds}s%{$RESET_COLOR%}"
+	    echo -en &quot;%{$BLUE_BOLD%}${seconds}s%{$RESET_COLOR%}&quot;
 	  fi
 	}
 
 	function gitprompt() {
-	  branch=`git branch -v 2>/dev/null | grep -o "^\*.*" | cut -d ' ' -f 2`
-	  if [[ -n "${branch}" ]]; then
-	    numchanges=`git status -s 2>/dev/null | wc -l | sed 's/\ *//'`
-	    echo -en "${GITICON} %{$GREEN_BOLD%}${branch}%{$RESET_COLOR%} "
+	  branch=`git branch -v 2&gt;/dev/null | grep -o &quot;^\*.*&quot; | cut -d ' ' -f 2`
+	  if [[ -n &quot;${branch}&quot; ]]; then
+	    numchanges=`git status -s 2&gt;/dev/null | wc -l | sed 's/\ *//'`
+	    echo -en &quot;${GITICON} %{$GREEN_BOLD%}${branch}%{$RESET_COLOR%} &quot;
 	    if [[ 0 -eq ${numchanges} ]]; then
-	      echo -en "%{$GREEN_BOLD%}${numchanges}%{$RESET_COLOR%} "
+	      echo -en &quot;%{$GREEN_BOLD%}${numchanges}%{$RESET_COLOR%} &quot;
 	    else
-	      echo -en "%{$YELLOW%}${numchanges}%{$RESET_COLOR%} "
+	      echo -en &quot;%{$YELLOW%}${numchanges}%{$RESET_COLOR%} &quot;
 	    fi
 	  fi
 	}
@@ -647,24 +580,22 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 	%{$BLUE%}${PROMPT_CHARACTER}%{$RESET_COLOR%} '
 
 	RPROMPT=' $(gitprompt)'
-</pre>
+</code></pre>
 <p>In my case I have this saved to .zsh-prompt and it's sourced from .zprofile</p>
 <h2>keyboard shortcuts</h2>
 <p>With zsh it's also possible to customize the keyboard shortcuts.  Here's what I use for shift+up and shift+down arrows:</p>
-<pre>
-	# shift up to navigate up a directory
+<pre><code>	# shift up to navigate up a directory
 	__cd_up()   { builtin pushd ..; echo; __call_precmds; zle reset-prompt }
 	zle -N __cd_up;   bindkey '^[[1;2A' __cd_up
 
 	# shift down to navigate back
 	__cd_undo() { builtin popd;     echo; __call_precmds; zle reset-prompt }
 	zle -N __cd_undo; bindkey '^[[1;2B' __cd_undo
-</pre>
+</code></pre>
 <h2>super users</h2>
 <p>You may come across times when you don't have permission or need to &quot;be root&quot; for things but you don't quite know why. This all goes back to the permissions section.  Root can do anything with the hardware of the system, including but not limited to watching all the packets that go in and out of a network interface or reading all your email.</p>
 <p>Different ways of switching users:</p>
-<pre>
-	# login as user1
+<pre><code>	# login as user1
 	su - user1
 	
 	# run command as root
@@ -672,7 +603,7 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 
 	# login as root
 	sudo -i
-</pre>
+</code></pre>
 <p>sudo is a program that allows users with permissions based on configuration to elevate their priveleges to root temporarily.  It's nice because the user doesn't need to know root's password, they just provide their own password and can be granted access assuming they are configured for it.  The default group for sudo permissions is &quot;wheel&quot;.  If you are a member of this group, then you can sudo. You can check the sudo configuration in /etc/sudoers file</p>
 <p>If you are root, then you don't need to know another user's password to &quot;become&quot; them.  Any su command will return ok and allow them in as that user. With root permissions any user can not only be root, but they can be any other user as well.</p>
 <h2>basic text parsing</h2>
@@ -682,222 +613,189 @@ That grabs headlines and links, but it's not very nice to look at.  Let's see if
 <li><a href="https://www.regexpal.com/">regexpal</a></li>
 </ul>
 <p>A basic regular expression is something like this:</p>
-<pre>
-	[a-zA-Z]
-</pre>
+<pre><code>	[a-zA-Z]
+</code></pre>
 <p>This matches any upper or lowercase letter in the ascii table.  Numbers can be matched like this:</p>
-<pre>
-	[0-9]
-</pre>
+<pre><code>	[0-9]
+</code></pre>
 <p>So, a simple grep for a CVE in a text file might look like this:</p>
-<pre>
-	grep -R  -E -o 'CVE-[0-9]+-[0-9]+' cvelist
-</pre>
+<pre><code>	grep -R  -E -o 'CVE-[0-9]+-[0-9]+' cvelist
+</code></pre>
 <p>The hyphen - inside brackets means &quot;through&quot; so it's matching 0 through 9
 The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 <p>To search and replace things, you can use the stream editor sed:</p>
-<pre>
-	sed 's/CVE/cve/' < cvelist/2012/5xxx/CVE-2012-5509.json
-</pre>
+<pre><code>	sed 's/CVE/cve/' &lt; cvelist/2012/5xxx/CVE-2012-5509.json
+</code></pre>
 <p>This replaces the &quot;CVE on a line with the lowercase &quot;cve&quot;.</p>
 <ul>
 <li><a href="https://www.unixguide.net/unix/sedoneliner.shtml">sed oneliners</a></li>
 </ul>
 <p>Useful if you have files that are key/value pairs of lines:</p>
-<pre>
-	alias oddlines="sed 'n; d'"
-	alias evenlines="sed '1d; n; d'"
-</pre>
+<pre><code>	alias oddlines=&quot;sed 'n; d'&quot;
+	alias evenlines=&quot;sed '1d; n; d'&quot;
+</code></pre>
 <p>Awk is incredibly useful.  It provides a way to run three blocks of code, one at the beginning, one for each line, and one at the end of a stream.  Here's an example that averages a column:</p>
-<pre>
-	function avg() {
-	  awk 'BEGIN{ count=0; sum=0; average=0; } { count++; sum+=$1; } END { printf ("{ \"sum\": %1.16f, \"count\": %d, \"average\": %1.16f }",sum,count,sum/count) }'
+<pre><code>	function avg() {
+	  awk 'BEGIN{ count=0; sum=0; average=0; } { count++; sum+=$1; } END { printf (&quot;{ \&quot;sum\&quot;: %1.16f, \&quot;count\&quot;: %d, \&quot;average\&quot;: %1.16f }&quot;,sum,count,sum/count) }'
 	}
-</pre>
+</code></pre>
 <p>Awk is a whole scripting language just like perl, and it's very command line friendly for small tasks. The begin and end blocks are optional.  Here's an example of standard deviation:</p>
-<pre>
-	# fine for small numbers
+<pre><code>	# fine for small numbers
 	function stddev() {
 	  awk '{sum+=$1; sumsq+=$1*$1} END {print sqrt(sumsq/NR - (sum/NR)**2)}'
 	}
-</pre>
+</code></pre>
 <p>Or just simply printing a single column:</p>
-<pre>
-	alias col1="awk '{ print \$1 }'"
-	alias col2="awk '{ print \$2 }'"
-	alias col3="awk '{ print \$3 }'"
-	alias col4="awk '{ print \$4 }'"
-	alias col5="awk '{ print \$5 }'"
-	alias col6="awk '{ print \$6 }'"
-	alias col7="awk '{ print \$7 }'"
-	alias col8="awk '{ print \$8 }'"
-	alias col9="awk '{ print \$9 }'"
-</pre>
+<pre><code>	alias col1=&quot;awk '{ print \$1 }'&quot;
+	alias col2=&quot;awk '{ print \$2 }'&quot;
+	alias col3=&quot;awk '{ print \$3 }'&quot;
+	alias col4=&quot;awk '{ print \$4 }'&quot;
+	alias col5=&quot;awk '{ print \$5 }'&quot;
+	alias col6=&quot;awk '{ print \$6 }'&quot;
+	alias col7=&quot;awk '{ print \$7 }'&quot;
+	alias col8=&quot;awk '{ print \$8 }'&quot;
+	alias col9=&quot;awk '{ print \$9 }'&quot;
+</code></pre>
 <h2>looping</h2>
 <p>The terminal is great for bulk operations.  Any command you can type, you can also run in a loop.</p>
-<pre>
-	for f in $(ls *.7z)
+<pre><code>	for f in $(ls *.7z)
 	do
 		7z x $f
 	done
-</pre>
+</code></pre>
 <p>find can execute commands for all the matches</p>
-<pre>
-	find ~/Downloads/ -name '*.7z' -exec  7z x {} \;
-</pre>
+<pre><code>	find ~/Downloads/ -name '*.7z' -exec  7z x {} \;
+</code></pre>
 <p>xargs supports parallel operations</p>
-<pre>
-	find ~/Downloads/ -name '*.7z' | xargs -P 0 -n 1 7z x
-</pre>
+<pre><code>	find ~/Downloads/ -name '*.7z' | xargs -P 0 -n 1 7z x
+</code></pre>
 <h2>expansion and globbing</h2>
 <p>Sometimes you want to loop over a set of things that is numeric, you can use expansion for that</p>
-<pre>
-	for month in {01..12}
+<pre><code>	for month in {01..12}
 	do
 		echo $month
 	done
-</pre>
+</code></pre>
 <p>If you have files that are in nested subfolders, you can use the * or ** wildcards to match.</p>
-<pre>
-	ls *.txt	# all txt files in the current folder
+<pre><code>	ls *.txt	# all txt files in the current folder
 
 	ls */*.txt	# all txt files in all subfolders (1 level deep)
 
 	# zsh only
 	ls **/*.txt	# all txt files in all subfolders (fully recursive)
-</pre>
+</code></pre>
 <h2>package managers</h2>
 <p>It's important to point out that lots of terminal commands are available from language specific package managers.  It's very useful to have python, ruby, node.js and golang all working in a terminal so that you can use commands people have published.</p>
 <p>Here's a broad overview:</p>
-<pre>
-	perl / cpan
+<pre><code>	perl / cpan
 	ruby / gem
 	python / pip
 	node.js / npm
-</pre>
+</code></pre>
 <p>Here are some of my favorites:</p>
-<pre>
-	sudo pip install httpie
+<pre><code>	sudo pip install httpie
 	sudo pip install csvkit
 	sudo pip install pygmentize
 
 	npm i -g json
 	npm i -g underscore-cli
 	npm i -g http-server
-</pre>
+</code></pre>
 <h2>comparing data</h2>
 <p>I frequently have to compare data.  Diff isn't the only way to do that.</p>
-<pre>
-	diff		compare files line by line
+<pre><code>	diff		compare files line by line
 	comm		select or reject lines common to two files
 	diff3		compare three files line by line
 	vimdiff		compare 2 or more files using vim
 	colordiff	a tool to colorize diff output
 	patch		apply a diff file to an original
 	sdiff		side-by-side merge of file differences
-</pre>
+</code></pre>
 <p>Even binary data can be compared:</p>
-<pre>
-	cmp		compare two files byte by byte
+<pre><code>	cmp		compare two files byte by byte
 	md5		calculate a message-digest fingerprint (checksum)
 	hexdump		ASCII, decimal, hexadecimal, octal dump
 	strings		print the strings of printable characters in files
 	xxd		make a hexdump or do the reverse
 	od		dump files in octal and other formats
-</pre>
+</code></pre>
 <p>csv/tsv/pipe</p>
-<pre>
-	sudo pip install csvkit
-</pre>
+<pre><code>	sudo pip install csvkit
+</code></pre>
 <p>json</p>
-<pre>
-	jq	command line json parser
+<pre><code>	jq	command line json parser
 
 	npm i -g json
 	npm i -g underscore-cli
-</pre>
+</code></pre>
 <p>When all else fails, sql to the rescue</p>
-<pre>
-	sqlite3
+<pre><code>	sqlite3
 	.import FILE TABLE
-</pre>
+</code></pre>
 <h2>plotting results</h2>
 <p>Sometimes it's just easier with graphics. It's easy enough to plot data at the terminal:</p>
-<pre>
-	alias plotbox='gnuplot -e "set terminal dumb size $(tput cols),$(tput lines); unset key; unset border; plot \"-\" with boxes"'
-	alias plotline='gnuplot -e "set terminal dumb size $(tput cols),$(tput lines); unset key; unset border; set grid; plot \"-\" with lines"'
-	alias plotlinepng='gnuplot -e "set terminal png size 800,600; plot \"-\" title \"data\" with lines"'
-	alias plotlinejpg='gnuplot -e "set terminal jpeg size 800,600; plot \"-\" title \"data\" with lines"'
-	alias plotlinesvg='gnuplot -e "set terminal svg size 800,600; plot \"-\" title \"data\" with lines"'
-</pre>
+<pre><code>	alias plotbox='gnuplot -e &quot;set terminal dumb size $(tput cols),$(tput lines); unset key; unset border; plot \&quot;-\&quot; with boxes&quot;'
+	alias plotline='gnuplot -e &quot;set terminal dumb size $(tput cols),$(tput lines); unset key; unset border; set grid; plot \&quot;-\&quot; with lines&quot;'
+	alias plotlinepng='gnuplot -e &quot;set terminal png size 800,600; plot \&quot;-\&quot; title \&quot;data\&quot; with lines&quot;'
+	alias plotlinejpg='gnuplot -e &quot;set terminal jpeg size 800,600; plot \&quot;-\&quot; title \&quot;data\&quot; with lines&quot;'
+	alias plotlinesvg='gnuplot -e &quot;set terminal svg size 800,600; plot \&quot;-\&quot; title \&quot;data\&quot; with lines&quot;'
+</code></pre>
 <p>Example:</p>
-<pre>
-	seq 100 | shuf | plotline
-</pre>
+<pre><code>	seq 100 | shuf | plotline
+</code></pre>
 <p>There are also some packages available for more advanced cases:</p>
-<pre>
-	sudo pip install bashplotlib
+<pre><code>	sudo pip install bashplotlib
 	yay -S ttyplot
-</pre>
+</code></pre>
 <h2>working with multimedia</h2>
 <p>Sometimes you have to process images, audio or video.  Many times it's easier to batch convert or resize things than it is to work on them as individual files in something like Gimp.</p>
 <p>For images, you'll want to install imagemagick.  That will give you the convert command:</p>
-<pre>
-	# parallel resize, crop, and convert to png
-	parallel -i -j $(ls -l *.jpg | wc -l) sh -c "convert '{}' -resize 850 -crop x315 '{}.png'" -- *.jpg
-</pre>
+<pre><code>	# parallel resize, crop, and convert to png
+	parallel -i -j $(ls -l *.jpg | wc -l) sh -c &quot;convert '{}' -resize 850 -crop x315 '{}.png'&quot; -- *.jpg
+</code></pre>
 <p>For audio, ffmpeg is your friend</p>
-<pre>
-	alias towav="ffmpeg -i pipe:0 -f wav pipe:1"
-	alias tomp3="ffmpeg -i pipe:0 -f mp3 pipe:1"
-	alias tomono="ffmpeg -i pipe:0 -f wav -ac 1 pipe:1"
+<pre><code>	alias towav=&quot;ffmpeg -i pipe:0 -f wav pipe:1&quot;
+	alias tomp3=&quot;ffmpeg -i pipe:0 -f mp3 pipe:1&quot;
+	alias tomono=&quot;ffmpeg -i pipe:0 -f wav -ac 1 pipe:1&quot;
 
-	cat foo.wav | tomp3 > foo.mp3
-</pre>
+	cat foo.wav | tomp3 &gt; foo.mp3
+</code></pre>
 <p>And video too:</p>
-<pre>
-	ffmpeg -i input.mp4 -q:v 10 -c:v libvpx -c:a libvorbis output.webm
-</pre>
+<pre><code>	ffmpeg -i input.mp4 -q:v 10 -c:v libvpx -c:a libvorbis output.webm
+</code></pre>
 <p>Audio playback is possible too, you can use the media player to play sounds when tasks complete</p>
-<pre>
-	mpv foo.wav
-</pre>
+<pre><code>	mpv foo.wav
+</code></pre>
 <p>What about converting speech to text? You can use whisper</p>
-<pre>
-	pip install openai-whisper
+<pre><code>	pip install openai-whisper
 
 	# run speech to text on the audio file
 	whisper foo.mp3 | tee transcript.txt
-</pre>
+</code></pre>
 <h2>system clipboard integration</h2>
 <p>If you are using Xorg then you can copy and paste with xclip</p>
-<pre>
-	# copy to clipboard
+<pre><code>	# copy to clipboard
 	uptime | xclip
 
 	# paste from clipboard
-	xclip -o > uptime.txt
-</pre>
+	xclip -o &gt; uptime.txt
+</code></pre>
 <p>If you are using Wayland, there is a wl version:</p>
-<pre>
-	echo "foo" | wl-copy
-	wl-paste > foo.txt
-</pre>
+<pre><code>	echo &quot;foo&quot; | wl-copy
+	wl-paste &gt; foo.txt
+</code></pre>
 <p>If you are on MacOS you can use the pb commands for the pasteboard</p>
-<pre>
-	echo "foo" | pbcopy
-	pbpaste > foo.txt
-</pre>
+<pre><code>	echo &quot;foo&quot; | pbcopy
+	pbpaste &gt; foo.txt
+</code></pre>
 <p>And on Windows there is clip</p>
-<pre>
-	echo "foo" | clip
-	paste > foo.txt
-</pre>
+<pre><code>	echo &quot;foo&quot; | clip
+	paste &gt; foo.txt
+</code></pre>
 <p>Or the powershell version:</p>
-<pre>
-	echo "foo" | Set-Clipboard
-	Paste-Clipboard > foo.txt
-</pre>
+<pre><code>	echo &quot;foo&quot; | Set-Clipboard
+	Paste-Clipboard &gt; foo.txt
+</code></pre>
 <p>In your profile scripts you can check what operating system you are on and assign the correct commands to an alias like c and p.  Then no matter what machine the same c and p commands will work.</p>
 <h2>sharing dotfiles across machines</h2>
 <p>I spent years mucking about with custom functions and then I found chezmoi.  It just works, and I can get over it's quirks.  If you really want to roll your own thing, then more power to you, but for me, chezmoi is good enough.</p>
@@ -906,8 +804,7 @@ The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 </ul>
 <h2>ssh and networking</h2>
 <p>Now that you're familiar with the shell and have some things configured, let's go over some basic networking commands that are relavent to the linux system. You may need to install some of these as not all networking tools come as part of all distros.</p>
-<pre>
-	# list all interfaces with colored output
+<pre><code>	# list all interfaces with colored output
 	ip -c address
 
 	# list only ipv4 addresses:
@@ -940,14 +837,12 @@ The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 
 	# terminal ui to watch the network traffic on the host in real time
 	sudo nethogs
-</pre>
+</code></pre>
 <p>SSH can be used to login to a secure shell on another machine.</p>
-<pre>
-	ssh -i aws-key.pem -L 5432:localhost:5432 ec2-machine
-</pre>
+<pre><code>	ssh -i aws-key.pem -L 5432:localhost:5432 ec2-machine
+</code></pre>
 <p>You probably don't want to have to type the same arguments to ssh every time like passing in -i or -L all the time.  You can simplify your life with a config file:</p>
-<pre>
-	cat .ssh/config
+<pre><code>	cat .ssh/config
 	
 	Host razorcrest
 	  Hostname 10.10.10.1
@@ -960,45 +855,39 @@ The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 	  IdentityFile ~/.ssh/mando
 	  ProxyJump razorcrest
 	  LocalForward 80 localhost:8080
-</pre>
+</code></pre>
 <p>Now that we've setup an entry for mando we can just type</p>
-<pre>
-	ssh mando
-</pre>
+<pre><code>	ssh mando
+</code></pre>
 <p>And it will automatically pass the identity file, forward the ports, and even jump through a bastion host to get there. The point here is it can be named anything.  ssh will use your config file for the names, so you can call the files and servers anything you like so long as the hostname field is correct.   man ssh_config for more info.</p>
 <p>There are times when I just want to forward a port temporarily, that's when I use this function to setup a tunnel</p>
-<pre>
-	function ssh_tunnel () {
+<pre><code>	function ssh_tunnel () {
 	  target=$1
 	  port=$2
 
 	  ssh -N -L ${port}:localhost:${port} ${target}
 	}
-</pre>
+</code></pre>
 <p>The $1 and $2 variables are the parameters to the function:</p>
-<pre>
-	ssh_tunnel foo 80
-</pre>
+<pre><code>	ssh_tunnel foo 80
+</code></pre>
 <p>You can copy files to and from remote servers using scp</p>
-<pre>
-	# upload a file
+<pre><code>	# upload a file
 	scp localfile remoteserver:/path/to/remote/file
 
 	# download a file
 	scp remoteserver:/path/to/remote/file localfile
-</pre>
+</code></pre>
 <p>There are times when you want to transfer a file directly between two computers and not have to download it to one place and upload it to another place because that would take too long or be cumbersome. You can easily do that with netcat.</p>
-<pre>
-	# on computer a listen on port 3333 and write the incoming data to a file foo.txt
-	nc -l 3333 > readme.md
+<pre><code>	# on computer a listen on port 3333 and write the incoming data to a file foo.txt
+	nc -l 3333 &gt; readme.md
 
 	# on computer b write the contents of a file to the remote computer port 3333
 	cat readme.md | nc 192.168.1.1 3333
-</pre>
+</code></pre>
 <h2>system monitoring</h2>
 <p>The sar command can monitor many things on the system, cpu, memory, disk, network, etc.</p>
-<pre>
-	# everything
+<pre><code>	# everything
 	sar -A 1
 
 	# paging statistics
@@ -1015,10 +904,9 @@ The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 
 	# network stats for a single interface
 	sar -n ALL --iface=wlp4s0 1
-</pre>
+</code></pre>
 <p>For a terminal ui, top is installed on most systems, but there are prettier alternatives</p>
-<pre>
-	# top, available almost everywhere
+<pre><code>	# top, available almost everywhere
 	top
 
 	# htop, a prettier top
@@ -1026,7 +914,7 @@ The plus + means &quot;at least 1 but maybe more&quot; of something</p>
 
 	# bottom, a prettier htop
 	btm
-</pre>
+</code></pre>
 <p>For a web gui there are several options.  I like netdata.</p>
 <ul>
 <li><a href="https://github.com/netdata/netdata">netdata source</a></li>
