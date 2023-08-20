@@ -1,8 +1,10 @@
-<h2>connecting to github securely</h2>
-<pre>
-$ cat ~/.ssh/config
+<h1>connecting to github securely</h1>
+<p>First make sure you have tor running.  Either start the daemon process or run it manually with <code>tor</code></p>
+<pre><code>	sudo systemctl start tor
+</code></pre>
+<pre><code>$ cat ~/.ssh/config
 Host github.com
     User git
     IdentitiesOnly yes
     ProxyCommand nc -X 5 -x 127.0.0.1:9050 %h %p
-</pre>
+</code></pre>
