@@ -1,0 +1,236 @@
+<h1>Home Lab Hybrid Cloud Setup</h1>
+<p>In this hybrid setup I'm using the cloud server as a proxy for various subdomains to make them public with certificates but keeping the backend services running in the home lab.  It's cheaper and easier to run something locally on my network but I can't serve 80 or 443 from it. Moreover, if my ip address changes it would mean I would also need to make dns updates or do something with dyndns. No need for that here because if the home lab ip changes it doesn't effect the wireguard tunnel addresses. The general concept is that from a single cheap g6-nanode-1 instance you can serve a lot of functionality with all the main components of your architecture hosted inside the homb lab like the db, elasticsearch, api services, cron jobs, etc. assuming your power and internet are stable at home of course.</p>
+<p>There are three key components to this.</p>
+<ul>
+<li>The cloud service (I'm going to use linode in this example)</li>
+<li>The wireguard tunnel (You can use tailscale but I'll do a manual setup here)</li>
+<li>The home lab setup (In my case, an intel nuc)</li>
+</ul>
+<h2>setting up the tunnel</h2>
+<p>We will start with setting up the tunnel, but we need a server first</p>
+<pre><code>	linode linodes create --root_pass=$(bw generate)
+</code></pre>
+<p>first things first, ssh into the cloud server, then poke some holes in the firewall for cloud traffic</p>
+<pre><code>	ufw allow 22/tcp 	# ssh
+	ufw allow 51820/udp     # wireguard
+	ufw allow 80/tcp	# letsencrypt http01 validation
+	ufw allow 443/tcp       # secured api
+	ufw enable
+</code></pre>
+<p>next, on the cloud server and the home lab server, we need to create some keys.</p>
+<pre><code>	apt-get install -y wireguard wireguard-tools
+	cd /etc/wireguard
+	wg genkey | tee privatekey | wg pubkey &gt; publickey
+</code></pre>
+<p>Now that we have our keys we can set our peer configuration. We are going to use the 10.8.0.0/24 block for our network, edit /etc/wireguard/wg0.conf on the cloud server:</p>
+<pre><code>	[Interface]
+	Address = 10.8.0.1/24
+	ListenPort = 51820
+	PrivateKey = &lt;cloud_server_private_key&gt;
+
+	[Peer]
+	PublicKey = &lt;home_lab_public_key&gt;
+	AllowedIPs = 10.8.0.2/32
+	PersistentKeepalive = 25
+</code></pre>
+<p>Next edit /etc/wireguard/wg0.conf on the home lab server and add entries. The keep-alive is important, otherwise your tunnel will go down after inactivity</p>
+<pre><code>	[Interface]
+	PrivateKey = &lt;home_lab_private_key&gt;
+	Address = 10.8.0.2/24
+
+	[Peer]
+	PublicKey = &lt;cloud_server_public_key&gt;
+	AllowedIPs = 10.8.0.0/24
+	Endpoint = &lt;cloud_server_public_ip&gt;:51820
+	PersistentKeepalive = 25
+</code></pre>
+<p>And now on both the home lab and the cloud server, enable the service</p>
+<pre><code>	systemctl enable --now wg-quick@wg0
+</code></pre>
+<p>You can debug by showing the wireguard configuration</p>
+<pre><code>	wg show
+</code></pre>
+<p>Now we can test, from the home lab server we should be able to ping .1 and from the cloud server we should be able to ping .2</p>
+<pre><code>	homelab$ ping 10.8.0.1
+	cloud$ ping 10.8.0.2
+</code></pre>
+<h2>Setting up k3s and certificate manager on the cloud server</h2>
+<p>I'm using k3s a lightweight alternative to kube that comes with traefik for routing</p>
+<pre><code>	curl -sfL https://get.k3s.io | sh -
+</code></pre>
+<p>Now, install certificate manager</p>
+<pre><code>	kubectl create namespace cert-manager
+	kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.yaml
+</code></pre>
+<p>You can follow the same steps with the home lab server to install k3s. You can make this as complicated as you want, to keep it simple and to ease resource usage on the nanode I'm avoiding things like argocd.</p>
+<h2>Deploying the api</h2>
+<p>For demonstration purposes, let's deploy an elasticsearch api. In reality this would probably be left as a backend service and a custom api would be exposed instead. Apply the deployment yaml to the home lab:</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-deployment
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: elasticsearch:8.8.1
+        ports:
+        - containerPort: 9200
+        env:
+        - name: discovery.type
+          value: single-node
+        - name: xpack.security.enabled
+          value: &quot;false&quot;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+spec:
+  type: NodePort
+  selector:
+    app: elasticsearch
+  ports:
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200
+    nodePort: 31200
+
+</code></pre>
+<p>This starts the elasticsearch api and it to the node port 31200.  Note also that security is turned off.  The wireguard tunnel is encrypted and the http traffic is encrypted and if we had security on we would have certificate handling issues trying to intercept and forward the traffic.</p>
+<pre><code>	kubectl create namespace api
+	kubectl -n api apply -f deployment.yaml
+</code></pre>
+<p>And we should be able to get to it from our cloud server:</p>
+<pre><code>	curl 'http://10.8.0.2:31200/_cluster/health?pretty'
+
+	{
+	  &quot;cluster_name&quot; : &quot;docker-cluster&quot;,
+	  &quot;status&quot; : &quot;green&quot;,
+	  &quot;timed_out&quot; : false,
+	  &quot;number_of_nodes&quot; : 1,
+	  &quot;number_of_data_nodes&quot; : 1,
+	  &quot;active_primary_shards&quot; : 0,
+	  &quot;active_shards&quot; : 0,
+	  &quot;relocating_shards&quot; : 0,
+	  &quot;initializing_shards&quot; : 0,
+	  &quot;unassigned_shards&quot; : 0,
+	  &quot;delayed_unassigned_shards&quot; : 0,
+	  &quot;number_of_pending_tasks&quot; : 0,
+	  &quot;number_of_in_flight_fetch&quot; : 0,
+	  &quot;task_max_waiting_in_queue_millis&quot; : 0,
+	  &quot;active_shards_percent_as_number&quot; : 100.0
+	}
+</code></pre>
+<h2>Setting up the cloud proxy</h2>
+<p>First, we need a dns record, go to your domain's dns management and add a record for the new api</p>
+<pre><code>	api	3600	 IN 	A	70.165.208.213
+</code></pre>
+<p>Now we can proxy to it from our cloud server.  The trick is setting the endpoint for the service manually.</p>
+<p>cluster-issuer.yaml:</p>
+<pre><code>apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: huowrs16dwk@proton.me
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - http01:
+        ingress:
+          class: traefik
+</code></pre>
+<p>ronin-api-proxy.yaml:</p>
+<pre><code>apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ronin-api
+  namespace: default
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`api.xn--gmqy16e.co`)
+      kind: Rule
+      services:
+        - name: ronin-api-proxy
+          port: 80
+  tls:
+    secretName: api.xn--gmqy16e.co
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api.xn--gmqy16e.co
+  namespace: default
+spec:
+  dnsNames:
+    - api.xn--gmqy16e.co
+  secretName: api.xn--gmqy16e.co
+  issuerRef:
+    name: letsencrypt
+    kind: Issuer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ronin-api-proxy
+  namespace: default
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 31200
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ronin-api-proxy
+  namespace: default
+subsets:
+- addresses:
+    - ip: 10.8.0.2
+  ports:
+    - port: 31200
+</code></pre>
+<h2>Debugging certificates</h2>
+<p>You can watch the certificate manager progress by checking a few cert manager objects</p>
+<pre><code>	kubectl describe certificate api.xn--gmqy16e.co
+	kubectl describe certificaterequest api.xn--gmqy16e.co-nwzxm
+	kubectl describe order api.xn--gmqy16e.co-nwzxm-1892479097
+</code></pre>
+<p>Testing the public route</p>
+<pre><code>	curl https://api.xn--gmqy16e.co
+	{
+	  &quot;name&quot; : &quot;elasticsearch-deployment-7488648ff6-7bqsl&quot;,
+	  &quot;cluster_name&quot; : &quot;docker-cluster&quot;,
+	  &quot;cluster_uuid&quot; : &quot;2KXZPPPSTjiKlA6rklwQRQ&quot;,
+	  &quot;version&quot; : {
+	    &quot;number&quot; : &quot;8.8.1&quot;,
+	    &quot;build_flavor&quot; : &quot;default&quot;,
+	    &quot;build_type&quot; : &quot;docker&quot;,
+	    &quot;build_hash&quot; : &quot;f8edfccba429b6477927a7c1ce1bc6729521305e&quot;,
+	    &quot;build_date&quot; : &quot;2023-06-05T21:32:25.188464208Z&quot;,
+	    &quot;build_snapshot&quot; : false,
+	    &quot;lucene_version&quot; : &quot;9.6.0&quot;,
+	    &quot;minimum_wire_compatibility_version&quot; : &quot;7.17.0&quot;,
+	    &quot;minimum_index_compatibility_version&quot; : &quot;7.0.0&quot;
+	  },
+	  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+	}
+</code></pre>
+<p>Now we have a generic cloud proxy that we can use to capture 80 and 443 with real certificates on nearly any domain but keep the main components of the architecture on-site and save a lot of money in cloud hosting.</p>
