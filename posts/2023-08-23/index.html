@@ -1,4 +1,18 @@
-<h1>Home Lab Hybrid Cloud Setup</h1>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>home lab hybrid cloud setup</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>home lab hybrid cloud setup</h1>
 <p>In this hybrid setup I'm using the cloud server as a proxy for various subdomains to make them public with certificates but keeping the backend services running in the home lab.  It's cheaper and easier to run something locally on my network but I can't serve 80 or 443 from it. Moreover, if my ip address changes it would mean I would also need to make dns updates or do something with dyndns. No need for that here because if the home lab ip changes it doesn't effect the wireguard tunnel addresses. The general concept is that from a single cheap g6-nanode-1 instance you can serve a lot of functionality with all the main components of your architecture hosted inside the homb lab like the db, elasticsearch, api services, cron jobs, etc. assuming your power and internet are stable at home of course.</p>
 <p>There are three key components to this.</p>
 <ul>
@@ -234,3 +248,36 @@ subsets:
 	}
 </code></pre>
 <p>Now we have a generic cloud proxy that we can use to capture 80 and 443 with real certificates on nearly any domain but keep the main components of the architecture on-site and save a lot of money in cloud hosting.</p>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/2023-08-23/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/2023-08-20/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/2023-08-15/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/2023-07-30/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
