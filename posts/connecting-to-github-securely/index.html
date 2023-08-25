@@ -5,11 +5,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/bundle.css">
-    <title>浪人.co</title>
+    <title>connecting to github securely</title>
   </head>
   <body>
     <div class="wrapper">
-    <h1>浪人.co</h1>
+    
+<article>
+
+<h1>connecting to github securely</h1>
+<p>First make sure you have tor running.  Either start the daemon process or run it manually with <code>tor</code></p>
+<pre><code>	sudo systemctl start tor
+</code></pre>
+<pre><code>$ cat ~/.ssh/config
+Host github.com
+    User git
+    IdentitiesOnly yes
+    ProxyCommand nc -X 5 -x 127.0.0.1:9050 %h %p
+</code></pre>
+
+
+</article>
+
 
     </div>
 

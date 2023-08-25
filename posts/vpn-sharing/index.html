@@ -1,0 +1,86 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>vpn sharing</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>vpn sharing</h1>
+<p>First, connect the vpn.  In my case I'm using mozilla which creates a moz0 network interface.  If you are using openvpn it will probably create a tun0 interface.  Once you have your interface created and the vpn is connected, you can share the connection with other computers on the network by forcing it to act as a gateway.</p>
+<p>The first step is to turn on ip forwarding in the kernel, you can do this by editing sysctl.conf</p>
+<pre><code>	echo &quot;net.ipv4.ip_forward = 1&quot; | sudo tee -a /etc/sysctl.conf
+	echo &quot;net.ipv6.conf.all.forwarding = 1&quot; | sudo tee -a /etc/sysctl.conf
+
+	sysctl -p
+</code></pre>
+<p>The next step is setting up nat forwarding for the interface.  In my case I'm sharing the vpn with other computers on the wifi interface wlp2s0b1</p>
+<pre><code>	# ipv4
+	iptables -t nat -A POSTROUTING -o moz0 -j MASQUERADE
+	iptables -A FORWARD -i moz0 -o wlp2s0b1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+	iptables -A FORWARD -i wlp2s0b1 -o moz0 -j ACCEPT
+
+	# ipv6
+	ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+	ip6tables -A FORWARD -i moz0 -o wlp2s0b1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+	ip6tables -A FORWARD -i wlp2s0b1 -o moz0 -j ACCEPT
+</code></pre>
+<p>Next, on another computer on the network, you need to set the default gateway to be the forwarded interface.</p>
+<pre><code>	# ipv4
+	sudo ip -4 route delete default
+	sudo ip -4 route add default via 192.168.1.1 # ip of the vpn gateway wlp interface
+
+	# ipv6
+	sudo ip -6 route delete default
+	sudo ip -6 route add default via 2604:8180:d910:900::1b02 # ipv6 address of the wlp interface
+</code></pre>
+<p>Now you can test it with curl:</p>
+<pre><code>	# public ip will be the vpn value
+	curl -4 ifconfig.me
+	curl -6 ifconfig.me
+</code></pre>
+<p>To persist the changes on the gateway forever, you'll need to save the iptables rules:</p>
+<pre><code>	sudo apt-get install -y iptables-persistent ip6tables-persistent
+	sudo netfilter-persistent save
+</code></pre>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/encrypted-usb-sticks/">[ 2023-08-25 ] encrypted usb sticks</a></li>
+    
+      <li><a href="/posts/home-lab-hybrid-cloud-setup/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/vpn-sharing/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/command-line-tutorial/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/connecting-to-github-securely/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
