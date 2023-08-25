@@ -1,0 +1,80 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>encrypted usb sticks</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>encrypted usb sticks</h1>
+<p>Most desktop environments and their file managers have some level of support for encrypted removable media.
+It turns out encrypting a usb stick is actually pretty simple with a few commans.</p>
+<p>First, you'll need the <code>cryptsetup</code> package</p>
+<pre><code>sudo pacman -S cryptsetup
+</code></pre>
+<p>To create a single primary partition on the disk, we can use fdisk.  Careful, this will blow away everything.  You can of course use <code>cfdisk</code> or <code>parted</code> instead if you prefer a gui</p>
+<pre><code>sudo fdisk /dev/sda &lt;&lt;EOF
+o
+n
+p
+1
+
+
+w
+EOF
+</code></pre>
+<p>Next we need to format the partition with luks</p>
+<pre><code>sudo cryptsetup luksFormat /dev/sda1
+</code></pre>
+<p>Next we need to unlock the luks partition:</p>
+<pre><code>sudo cryptsetup luksOpen /dev/sda1 usbstick
+</code></pre>
+<p>This creates a new device at <code>/dev/mapper/usbstick</code> we can now format with a user file system and mount</p>
+<pre><code>sudo mkfs -t ext4 /dev/mapper/usbstick
+sudo mount /dev/mapper/usbstick /mnt
+</code></pre>
+<p>GUI file managers like Nautilus, Dolphin, and Thunar should see the usb stick is encrypted and prompt for a password when mounting</p>
+<p>To lock the disk again, we can close it using luks</p>
+<pre><code>sudo cryptsetup luksClose usbstick
+</code></pre>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/2023-08-25/">[ 2023-08-25 ] encrypted usb sticks</a></li>
+    
+      <li><a href="/posts/2023-08-23/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/2023-08-20/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/2023-08-15/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/2023-07-30/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
