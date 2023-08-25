@@ -1,0 +1,17 @@
+<div class="footer">
+
+
+<nav>
+  <ul>
+    {% for page in collections.posts | reverse %}
+      <li><a href="{{ page.url }}">[ {{ page.data.date | dateFormat }} ] {{ page.data.title }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
