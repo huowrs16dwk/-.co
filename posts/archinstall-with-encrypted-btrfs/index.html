@@ -1,0 +1,146 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>archinstall with encrypted btrfs</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>archinstall with encrypted btrfs</h1>
+<p>Installing btrfs and getting snapshots working with encrypted disks can be tricky.
+There are several bugs in the archinstall script still and the recommended way to install arch continues to be following the guide and doing it manually.
+After doing this a few times I have found it's easier to run archinstall and then clean up the mess after than do everything by hand.</p>
+<h2>first boot</h2>
+<p>Most modern motherboards are using EFI these days, so if you are using ventoy you'll want to boot with grub2 not &quot;normal&quot;.</p>
+<h2>archinstall</h2>
+<p>Go get the <a href="https://archlinux.org/download/">arch iso</a> and load it up on your favorite usb drive.
+I like to use <a href="https://www.ventoy.net/en/download.html">ventoy</a>.</p>
+<p>Boot from the iso and run <code>archinstall</code> then select the following options:</p>
+<ul>
+<li>select your language</li>
+<li>mirrors &gt; mirror region &gt; select your region</li>
+<li>disk configuration &gt; use best effort
+<ul>
+<li>select primary hard drive &gt; btrfs &gt; use default structure &gt; compression on</li>
+</ul>
+</li>
+<li>disk encryption &gt; encryption password &gt; use something that isn't easily cracked by hashcat
+<ul>
+<li>partitions &gt; select the primary partition</li>
+<li>use hsm if you have the hardware for it</li>
+</ul>
+</li>
+<li>bootloader &gt; grub</li>
+<li>swap &gt; true</li>
+<li>set your hostname</li>
+<li>set a root password</li>
+<li>do not create a user account</li>
+<li>select a profile that makes sense, for example desktop</li>
+<li>audio server &gt; pipewire</li>
+<li>kernels &gt; linux-lts</li>
+<li>network &gt; select network manager if you are using gnome or kde</li>
+<li>select your timezone</li>
+</ul>
+<p>Then choose <code>install</code>. If you don't choose the options above it is highly likely it will blow up midway through. When it prompts you at the end to enter the environment select <code>yes</code></p>
+<h2>post-install cleanup</h2>
+<p>Now we have some cleanup to do.  First things first, we need to set the correct uuid for the primary disk in the grub configuration.</p>
+<pre><code class="language-bash"># append the block id info to the end of the grub template as commentary
+blkid | sed 's/^/#/' &gt;&gt; /etc/default/grub
+
+# edit the grub template
+vim /etc/default/grub
+</code></pre>
+<p>If you've never used vim before, let's take this as an opportunity to learn a little now.
+Jump to the end of the file with <code>G</code> you'll find the UUID info for the drives you have installed.  In my case I have two partitions <code>/dev/sda1</code> which is my EFI boot partition and <code>/dev/sda2</code> which is the luks volume.
+Navigate to the UUID value for <code>/dev/sda2</code> and yank it to register 0 with <code>y9w</code>.
+Jump to the beginning of the file with <code>gg</code> and then navigate to the <code>cryptdevice</code> entry.
+Visually select the broken UUID value with <code>v9wh</code> and then paste the correct value with <code>P</code>.
+When you are done press <code>ESC</code> then use <code>:x</code> to write the file and quit out of vim.</p>
+<p>That changes the template, but that does not fix the actual grub configuration.  Now we need to regenerate the grub config.
+Since we want to take advantage of snapshots anyway, we may as well just set that up now.</p>
+<p>The easiest way to have automatic snapshots with rollbacks is with the <a href="https://aur.archlinux.org/packages/snap-pac-grub">snap-pac-grub</a> AUR package.  Let's install that now.  I like to use <a href="https://aur.archlinux.org/packages/yay">yay</a> for managing AUR packages.  Unfortnately <code>makepkg</code> won't let you bulid as root, so we'll need to create a user first.</p>
+<pre><code class="language-bash"># install git and golang
+pacman -S git go
+
+# create a local user
+useradd -m -U -G wheel yourusername
+passwd yourusername
+
+# allow user sudo access
+visudo
+# jump to the &quot;%wheel&quot; entry with `/wheel` then navigate to the `#` and delete it with `x`
+# save and quit with `ESC` then `:x`
+
+# login as that user
+su - yourusername
+
+# install yay
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg
+makepkg -i
+
+# use yay to install snap-pac-grub
+yay -S snap-pac-grub
+
+# logout (back to root user)
+exit
+</code></pre>
+<p>You can ignore the library error, it's because snapper isn't setup yet. We will fix that after we reboot. Don't forget to eject the arch iso before rebooting.</p>
+<pre><code>shutdown -r now
+</code></pre>
+<h2>second boot</h2>
+<p>If everything went well with the grub menu you won't experience any issues during boot, you'll be prompted for the luks encryption password to unlock the disk and the btrfs sub-volumes will mount correctly.</p>
+<p>Login as root.</p>
+<p>Now we can setup snapper correctly.  You can refer to the <a href="https://wiki.archlinux.org/title/Snapper">arch wiki</a> for more info.</p>
+<pre><code>snapper list
+</code></pre>
+<p>You should see a single entry at <code>0</code>. Let's create a baseline snapshot.</p>
+<pre><code>snapper create --description 'fresh install'
+</code></pre>
+<p>snap-pac-grub automatically creates pre and post hooks into pacman and grub boot entries for the snapshots.  Try installing something and you'll see it in action.  If you take manual snapshots, you may want to regenerate the grub config at times.</p>
+<pre><code>grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/archinstall-with-encrypted-btrfs/">[ 2023-09-14 ] archinstall with encrypted btrfs</a></li>
+    
+      <li><a href="/posts/encrypted-usb-sticks/">[ 2023-08-25 ] encrypted usb sticks</a></li>
+    
+      <li><a href="/posts/home-lab-hybrid-cloud-setup/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/vpn-sharing/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/command-line-tutorial/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/connecting-to-github-securely/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>

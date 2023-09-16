@@ -9,6 +9,8 @@
 
 /posts/encrypted-usb-sticks/
 
+/posts/archinstall-with-encrypted-btrfs/
+
 /bundle.css
 
 /
