@@ -13,12 +13,10 @@ After doing this a few times I have found it's easier to run archinstall and the
 
 ## first boot
 
-Most modern motherboards are using EFI these days, so if you are using ventoy you'll want to boot with grub2 not "normal".
-
-## archinstall
-
 Go get the [arch iso](https://archlinux.org/download/) and load it up on your favorite usb drive.
 I like to use [ventoy](https://www.ventoy.net/en/download.html).
+
+Most modern motherboards are using EFI these days, so if you are using ventoy you'll want to boot with grub2 not "normal".
 
 Boot from the iso and run `archinstall` then select the following options:
 
@@ -125,5 +123,6 @@ snap-pac-grub automatically creates pre and post hooks into pacman and grub boot
 ```
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
+
 
 
