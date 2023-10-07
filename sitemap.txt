@@ -11,6 +11,8 @@
 
 /posts/archinstall-with-encrypted-btrfs/
 
+/posts/nixos-docker-llama-gpt/
+
 /bundle.css
 
 /

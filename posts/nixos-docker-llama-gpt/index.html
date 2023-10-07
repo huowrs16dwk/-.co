@@ -1,0 +1,102 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>nixos docker llama-gpt</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>nixos docker llama-gpt</h1>
+<p>Configuring nixos can be difficult because the parameters are not always obvious.  This assumes an x86 cpu and an nvidia gpu with cuda 12 support</p>
+<h2>configuring nixos</h2>
+<p>Add the following to /etc/nixos/configuration.nix</p>
+<pre><code>
+  environment.systemPackages = with pkgs; [
+    ...
+
+    # gpu
+    cudatoolkit
+  ];
+
+
+  # nvidia
+  hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.driSupport32Bit = true;
+
+  services.xserver.videoDrivers = [ &quot;nvidia&quot; ];
+
+  nixpkgs.config.cudaSupport = true;
+
+  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+  boot.kernelParams = [ &quot;module_blacklist=i915&quot; ];
+
+  # docker
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.enableNvidia = true;
+  virtualisation.docker.extraOptions = &quot;--add-runtime nvidia=/run/current-system/sw/bin/nvidia-container-runtime&quot;;
+
+</code></pre>
+<p>The upgrade will potentially take a very long time as it needs to compile several modules.
+You will need to reboot after the upgrade.</p>
+<pre><code>sudo nixos-rebuild switch &amp;&amp; sudo reboot
+</code></pre>
+<h2>testing</h2>
+<p>Ensure that nvidia-smi command works on the host machine and shows CUDA Version 12.x</p>
+<pre><code>nvidia-smi
+</code></pre>
+<p>Ensure the docker nvidia runtime is working correctly and that nvidia-smi can be run from inside a container</p>
+<pre><code>docker run --rm -it --gpus all nvidia/cuda:12.2.0-devel-ubuntu20.04 nvidia-smi
+</code></pre>
+<h2>running the project</h2>
+<pre><code>git clone https://github.com/getumbrel/llama-gpt
+cd llama-gpt
+./run.sh --model 7b --with-cuda
+</code></pre>
+<p>Now access port 3000 from a browser.</p>
+<p>Overall the system setup isn't complex but it can be confusing especially if you don't have the correct nix options setup.</p>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/nixos-docker-llama-gpt/">[ 2023-10-07 ] nixos docker llama-gpt</a></li>
+    
+      <li><a href="/posts/archinstall-with-encrypted-btrfs/">[ 2023-09-14 ] archinstall with encrypted btrfs</a></li>
+    
+      <li><a href="/posts/encrypted-usb-sticks/">[ 2023-08-25 ] encrypted usb sticks</a></li>
+    
+      <li><a href="/posts/home-lab-hybrid-cloud-setup/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/vpn-sharing/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/command-line-tutorial/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/connecting-to-github-securely/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
