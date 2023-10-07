@@ -23,6 +23,7 @@ Add the following to /etc/nixos/configuration.nix
 
 
   # nvidia
+
   hardware.nvidia.modesetting.enable = true;
   hardware.opengl.driSupport32Bit = true;
 
@@ -72,5 +73,3 @@ cd llama-gpt
 
 Now access port 3000 from a browser.
 
-
-Overall the system setup isn't complex but it can be confusing especially if you don't have the correct nix options setup.
