@@ -13,6 +13,8 @@
 
 /posts/nixos-docker-llama-gpt/
 
+/posts/practical-nix-flakes/
+
 /bundle.css
 
 /
