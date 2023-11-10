@@ -173,6 +173,56 @@ To generate the gemset.nix you'll need to use bundix:  `nix-shell -p bundix`
 }
 ```
 
+## java
+
+```
+{
+  description = "A simple Java project";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }:
+    let
+      # Import nixpkgs
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+      };
+
+      # Define the Java environment
+      javaEnv = pkgs.mkShell {
+        buildInputs = [ pkgs.jdk19_headless pkgs.maven ];
+      };
+    in
+    {
+      packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
+        pname = "my-java-app";
+        version = "1.0";
+        src = self;
+
+        # Set JAVA_HOME
+        buildInputs = [ pkgs.jdk19_headless pkgs.maven ];
+
+        # The build phase
+        buildPhase = ''
+          mvn compile
+        '';
+
+        # The install phase
+        installPhase = ''
+          mvn package
+        '';
+      };
+
+      # Define a development shell for `nix develop`
+      devShells.x86_64-linux = javaEnv;
+    };
+}
+```
+
+Note: `nix build` will not have internet access to the maven repo, so you'll need to download the packages with `mvn dependency:go-offline`
+
 ## rust
 
 ```
