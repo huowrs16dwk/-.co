@@ -159,6 +159,52 @@ nix develop
     };
 }
 </code></pre>
+<h2>java</h2>
+<pre><code>{
+  description = &quot;A simple Java project&quot;;
+
+  inputs = {
+    nixpkgs.url = &quot;github:NixOS/nixpkgs/nixos-unstable&quot;;
+  };
+
+  outputs = { self, nixpkgs }:
+    let
+      # Import nixpkgs
+      pkgs = import nixpkgs {
+        system = &quot;x86_64-linux&quot;;
+      };
+
+      # Define the Java environment
+      javaEnv = pkgs.mkShell {
+        buildInputs = [ pkgs.jdk19_headless pkgs.maven ];
+      };
+    in
+    {
+      packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
+        pname = &quot;my-java-app&quot;;
+        version = &quot;1.0&quot;;
+        src = self;
+
+        # Set JAVA_HOME
+        buildInputs = [ pkgs.jdk19_headless pkgs.maven ];
+
+        # The build phase
+        buildPhase = ''
+          mvn compile
+        '';
+
+        # The install phase
+        installPhase = ''
+          mvn package
+        '';
+      };
+
+      # Define a development shell for `nix develop`
+      devShells.x86_64-linux = javaEnv;
+    };
+}
+</code></pre>
+<p>Note: <code>nix build</code> will not have internet access to the maven repo, so you'll need to download the packages with <code>mvn dependency:go-offline</code></p>
 <h2>rust</h2>
 <pre><code>{
   description = &quot;A basic Rust application&quot;;
