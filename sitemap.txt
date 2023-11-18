@@ -15,6 +15,8 @@
 
 /posts/practical-nix-flakes/
 
+/posts/ghidra-debugging-with-lldb/
+
 /bundle.css
 
 /

@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>ghidra debugging with lldb</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>ghidra debugging with lldb</h1>
+<p>The Ghidra project added debugger support in version 10.  To setup lldb support you need to compile lldb-java (liblldb-java.so)</p>
+<p>To start, you'll need ghidra and some support packages</p>
+<pre><code>sudo pacman -S ghidra gradle swig lldb
+</code></pre>
+<p>BlackArch installs ghidra to /opt/ghidra.  In that directory there is a build.gradle file for lldb-java:</p>
+<pre><code>cd /opt/ghidra/Ghidra/Debug/Debugger-swig-lldb
+cat InstructionsForBuildingLLDBInterface.txt
+</code></pre>
+<p>The instructions are pretty good, but there are some gotchas.  For starters, you won't have permission since ghidra and it's directories are all owned by root.  So, you'll need to be root to do the build or change the permissions on the folders.  Then we can begin.</p>
+<p>You'll need the source code to lldb. You don't need to build lldb as you have the pacman pre-built version which should be 16, but you do need the headers.</p>
+<pre><code>git clone https://github.com/llvm/llvm-project.git
+git checkout release/16.x
+export LLVM_HOME=./llvm-project/
+export LLVM_BUILD=/usr/lib
+</code></pre>
+<p>Next we need to do the gradle build</p>
+<pre><code>gradle generateSwig
+gradle build
+</code></pre>
+<p>Next, install it to /usr/lib</p>
+<pre><code>cd /opt/ghidra/Ghidra/Debug/Debugger-swig-lldb/build/os/linux_x86_64
+cp liblldb-java.so /usr/lib
+</code></pre>
+<p>Then finally we need to adjust the launch.properties file</p>
+<pre><code>echo &quot;VMARGS=-Djava.library.path=/usr/lib&quot; &gt;&gt; /opt/ghidra/support/launch.properties
+</code></pre>
+<p>Now launch ghidra and start debugging something</p>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+      <li><a href="/posts/ghidra-debugging-with-lldb/">[ 2023-11-18 ] ghidra debugging with lldb</a></li>
+    
+      <li><a href="/posts/practical-nix-flakes/">[ 2023-11-09 ] practical nix flakes</a></li>
+    
+      <li><a href="/posts/nixos-docker-llama-gpt/">[ 2023-10-07 ] nixos docker llama-gpt</a></li>
+    
+      <li><a href="/posts/archinstall-with-encrypted-btrfs/">[ 2023-09-14 ] archinstall with encrypted btrfs</a></li>
+    
+      <li><a href="/posts/encrypted-usb-sticks/">[ 2023-08-25 ] encrypted usb sticks</a></li>
+    
+      <li><a href="/posts/home-lab-hybrid-cloud-setup/">[ 2023-08-23 ] home lab hybrid cloud setup</a></li>
+    
+      <li><a href="/posts/vpn-sharing/">[ 2023-08-20 ] vpn sharing</a></li>
+    
+      <li><a href="/posts/command-line-tutorial/">[ 2023-08-15 ] command line tutorial</a></li>
+    
+      <li><a href="/posts/connecting-to-github-securely/">[ 2023-07-30 ] connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
