@@ -4,7 +4,7 @@
 <nav>
   <ul>
     {% for page in collections.posts | reverse %}
-      <li><a href="{{ page.url }}">[ {{ page.data.date | dateFormat }} ] {{ page.data.title }}</a></li>
+    <li><a href="{{ page.url }}"><span class="date">[ {{ page.data.date | dateFormat }} ]</span> {{ page.data.title }}</a></li>
     {% endfor %}
   </ul>
 </nav>

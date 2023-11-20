@@ -9,7 +9,7 @@ date: 2023-07-30
 First make sure you have tor running.  Either start the daemon process or run it manually with `tor`
 
 ```
-	sudo systemctl start tor
+sudo systemctl start tor
 ```
 
 ```
