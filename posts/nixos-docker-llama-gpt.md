@@ -25,14 +25,10 @@ Add the following to /etc/nixos/configuration.nix
   # nvidia
 
   hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
-
   services.xserver.videoDrivers = [ "nvidia" ];
-
   nixpkgs.config.cudaSupport = true;
-
-  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
-  boot.kernelParams = [ "module_blacklist=i915" ];
 
   # docker
 
