@@ -28,14 +28,10 @@
   # nvidia
 
   hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
-
   services.xserver.videoDrivers = [ &quot;nvidia&quot; ];
-
   nixpkgs.config.cudaSupport = true;
-
-  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
-  boot.kernelParams = [ &quot;module_blacklist=i915&quot; ];
 
   # docker
 
