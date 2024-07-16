@@ -1,0 +1,135 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>hybrid cloud mail server</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>hybrid cloud mail server</h1>
+<p>Running mailcow in the cloud can be expensive as it uses a lot of system resources, but running from a local server and using the cloud only for it's public ipv4 address can save some money and provide better security in that the mail physically lives at a known location. Physical access is root access.</p>
+<p>It's possible to setup a local server and use something like <a href="https://ipv6.rs/">ipv6.rs</a> to have a public ipv6 address.  Another option is something like <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/">cloudflare tunnels</a> but that means you have to hand complete control of the domain over to cloudflare. If you just want a clean public ipv4 address you'll need a cloud server with minimum specs.  Find one with <a href="https://search.host2go.net/">host2go</a>. For proper mail delivery you'll also need to ensure your host allows <a href="https://dnschecker.org/reverse-dns.php">reverse dns</a> for the IP to point back to the mail domain.</p>
+<p><a href="/posts/home-lab-hybrid-cloud-setup">Setup the wireguard tunnel</a>.
+This assumes the cloud server is <code>10.8.0.1</code> and the local server is <code>10.8.0.2</code>.
+By setting allowed ips to <code>0.0.0.0/0</code> it will use the server as the default gateway.
+Outbound traffic will not work until after nat is enabled on the cloud server.</p>
+<p>Example local server wg0.conf</p>
+<pre><code class="language-text">[Interface]
+PrivateKey = &lt;local_server_private_key&gt;
+Address = 10.8.0.2/24
+
+[Peer]
+PublicKey = &lt;cloud_server_public_key&gt;
+AllowedIPs = 0.0.0.0/0
+Endpoint = &lt;cloud_server_public_ip&gt;:51820
+PersistentKeepalive = 25
+</code></pre>
+<p>Connect the wireguard tunnel on cloud and local servers.  The local server outbound traffic won't work until after the next step.</p>
+<pre><code class="language-bash">systemctl enable --now wg-quick@wg0
+</code></pre>
+<p>Enable forwarding on the cloud server, this allows nat/masquerading to work with iptables.</p>
+<pre><code class="language-bash"># cloud server
+
+echo &quot;net.ipv4.ip_forward = 1&quot; | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+</code></pre>
+<p>Setup firewall rules to forward mail server ports.
+At least http is needed for acme certificate requests, but https can be skipped.</p>
+<pre><code class="language-bash"># cloud server
+
+apt install -y iptables iptables-persistent
+
+# forward inbound mail server ports to wireguard peer
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 465 -j DNAT --to-destination 10.8.0.2:465
+iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 465 -d 10.8.0.2 -j MASQUERADE
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 587 -j DNAT --to-destination 10.8.0.2:587
+iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 587 -d 10.8.0.2 -j MASQUERADE
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 993 -j DNAT --to-destination 10.8.0.2:993
+iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 993 -d 10.8.0.2 -j MASQUERADE
+
+# forward web ports for acme certificate renewal
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.8.0.2:80
+iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 80 -d 10.8.0.2 -j MASQUERADE
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j DNAT --to-destination 10.8.0.2:443
+iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 443 -d 10.8.0.2 -j MASQUERADE
+
+# allow as default outbound gateway
+
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# save firewall rules
+
+netfilter-persistent save
+</code></pre>
+<p>At this point we effectively have our own custom vpn service, you should see your cloud ip for any outbound activity from the local server</p>
+<pre><code class="language-bash"># from local server
+
+curl ifconfig.me
+# should print cloud server ip
+</code></pre>
+<p>Next, setup mailcow on the local server. Boot it up then add your domains and configure dns as appropriate.</p>
+<pre><code class="language-bash"># local server
+
+git clone https://github.com/mailcow/mailcow-dockerized
+cd mailcow-dockerized
+./generate_config.sh
+
+docker compose up -d
+</code></pre>
+<p>The easydmarc <a href="https://easydmarc.com/tools/dmarc-record-generator">dmarc generator</a> and <a href="https://easydmarc.com/tools/spf-record-generator">spf record generator</a> tools are useful when setting up dns.</p>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+    <li><a href="/posts/hybrid-cloud-mailserver/"><span class="date">[ 2024-07-14 ]</span> hybrid cloud mail server</a></li>
+    
+    <li><a href="/posts/ghidra-debugging-with-lldb/"><span class="date">[ 2023-11-18 ]</span> ghidra debugging with lldb</a></li>
+    
+    <li><a href="/posts/practical-nix-flakes/"><span class="date">[ 2023-11-09 ]</span> practical nix flakes</a></li>
+    
+    <li><a href="/posts/nixos-docker-llama-gpt/"><span class="date">[ 2023-10-07 ]</span> nixos docker llama-gpt</a></li>
+    
+    <li><a href="/posts/archinstall-with-encrypted-btrfs/"><span class="date">[ 2023-09-14 ]</span> archinstall with encrypted btrfs</a></li>
+    
+    <li><a href="/posts/encrypted-usb-sticks/"><span class="date">[ 2023-08-25 ]</span> encrypted usb sticks</a></li>
+    
+    <li><a href="/posts/home-lab-hybrid-cloud-setup/"><span class="date">[ 2023-08-23 ]</span> home lab hybrid cloud setup</a></li>
+    
+    <li><a href="/posts/vpn-sharing/"><span class="date">[ 2023-08-20 ]</span> vpn sharing</a></li>
+    
+    <li><a href="/posts/command-line-tutorial/"><span class="date">[ 2023-08-15 ]</span> command line tutorial</a></li>
+    
+    <li><a href="/posts/connecting-to-github-securely/"><span class="date">[ 2023-07-30 ]</span> connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>
