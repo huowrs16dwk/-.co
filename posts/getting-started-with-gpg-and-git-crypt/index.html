@@ -1,0 +1,170 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bundle.css">
+    <title>getting started with gpg and git-crypt</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    
+<article>
+
+<h1>getting started with gpg and git-crypt</h1>
+<p>First, you'll need a gpg key</p>
+<pre><code>gpg --full-gen-key
+
+gpg (GnuPG) 2.4.5; Copyright (C) 2024 g10 Code GmbH
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Please select what kind of key you want:
+   (1) RSA and RSA
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+   (9) ECC (sign and encrypt) *default*
+  (10) ECC (sign only)
+  (14) Existing key from card
+Your selection? 9
+Please select which elliptic curve you want:
+   (1) Curve 25519 *default*
+   (4) NIST P-384
+   (6) Brainpool P-256
+Your selection? 1
+Please specify how long the key should be valid.
+         0 = key does not expire
+      &lt;n&gt;  = key expires in n days
+      &lt;n&gt;w = key expires in n weeks
+      &lt;n&gt;m = key expires in n months
+      &lt;n&gt;y = key expires in n years
+Key is valid for? (0) 1y
+Key expires at Sun 27 Jul 2025 10:55:35 AM EDT
+Is this correct? (y/N) y
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: ronin
+Email address: huowrs16dwk@proton.me
+Comment:
+You selected this USER-ID:
+    &quot;ronin &lt;huowrs16dwk@proton.me&gt;&quot;
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: directory '/home/ronin/.gnupg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/home/ronin/.gnupg/openpgp-revocs.d/7B4D7ED421EF3D928046780D06C65FB66D9760C4.rev'
+public and secret key created and signed.
+
+pub   ed25519 2024-07-27 [SC] [expires: 2025-07-27]
+      7B4D7ED421EF3D928046780D06C65FB66D9760C4
+uid                      ronin &lt;huowrs16dwk@proton.me&gt;
+sub   cv25519 2024-07-27 [E] [expires: 2025-07-27]
+</code></pre>
+<p>next in the git repo, initialize git crypt</p>
+<pre><code>git crypt init
+git crypt add-gpg-user huowrs16dwk@proton.me
+</code></pre>
+<p>To add encrypted files to the repo, you need to set the attributes</p>
+<pre><code>echo 'secret-file.txt filter=git-crypt diff=git-crypt' &gt;&gt; .gitattributes
+git add .gitattributes
+
+echo 'super secret spy stuff' &gt; secret-file.txt
+git add secret-file.txt
+
+git commit -m 'adding secret file'
+</code></pre>
+<p>You can export your key to use on another machine</p>
+<pre><code>gpg --list-secret-keys
+
+[keyboxd]
+---------
+sec   ed25519 2024-07-27 [SC] [expires: 2025-07-27]
+      7B4D7ED421EF3D928046780D06C65FB66D9760C4
+uid           [ultimate] ronin &lt;huowrs16dwk@proton.me&gt;
+ssb   cv25519 2024-07-27 [E] [expires: 2025-07-27]
+
+gpg --export-secret-keys -a 7B4D7ED421EF3D928046780D06C65FB66D9760C4 &gt; private.key
+</code></pre>
+<p>On the second machine you can import the gpg key</p>
+<pre><code>gpg --import private.key
+</code></pre>
+<p>And unlock the repo</p>
+<pre><code>git crypt unlock
+</code></pre>
+<p>To share your gpg key with other developers or services like github and gitlab you'll need the public key</p>
+<pre><code>gpg --armor --export 7B4D7ED421EF3D928046780D06C65FB66D9760C4 &gt; public.key
+</code></pre>
+<p>You can also use this same key to sign git commits</p>
+<pre><code>gpg --list-secret-keys --keyid-format LONG
+[keyboxd]
+---------
+sec   ed25519/06C65FB66D9760C4 2024-07-27 [SC] [expires: 2025-07-27]
+      7B4D7ED421EF3D928046780D06C65FB66D9760C4
+uid                 [ultimate] ronin &lt;huowrs16dwk@proton.me&gt;
+ssb   cv25519/0437E185D1FC2FE9 2024-07-27 [E] [expires: 2025-07-27]
+
+git config --global user.signingkey 06C65FB66D9760C4
+</code></pre>
+<p>To sign a commit, use -S</p>
+<pre><code>git commit -S -m &quot;My commit message&quot;
+</code></pre>
+<p>To sign all commits by default:</p>
+<pre><code>git config --global commit.gpgsign true
+</code></pre>
+
+
+</article>
+
+
+    </div>
+
+    <div class="footer">
+
+
+<nav>
+  <ul>
+    
+    <li><a href="/posts/getting-started-with-gpg-and-git-crypt/"><span class="date">[ 2024-07-27 ]</span> getting started with gpg and git-crypt</a></li>
+    
+    <li><a href="/posts/hybrid-cloud-mailserver/"><span class="date">[ 2024-07-14 ]</span> hybrid cloud mail server</a></li>
+    
+    <li><a href="/posts/ghidra-debugging-with-lldb/"><span class="date">[ 2023-11-18 ]</span> ghidra debugging with lldb</a></li>
+    
+    <li><a href="/posts/practical-nix-flakes/"><span class="date">[ 2023-11-09 ]</span> practical nix flakes</a></li>
+    
+    <li><a href="/posts/nixos-docker-llama-gpt/"><span class="date">[ 2023-10-07 ]</span> nixos docker llama-gpt</a></li>
+    
+    <li><a href="/posts/archinstall-with-encrypted-btrfs/"><span class="date">[ 2023-09-14 ]</span> archinstall with encrypted btrfs</a></li>
+    
+    <li><a href="/posts/encrypted-usb-sticks/"><span class="date">[ 2023-08-25 ]</span> encrypted usb sticks</a></li>
+    
+    <li><a href="/posts/home-lab-hybrid-cloud-setup/"><span class="date">[ 2023-08-23 ]</span> home lab hybrid cloud setup</a></li>
+    
+    <li><a href="/posts/vpn-sharing/"><span class="date">[ 2023-08-20 ]</span> vpn sharing</a></li>
+    
+    <li><a href="/posts/command-line-tutorial/"><span class="date">[ 2023-08-15 ]</span> command line tutorial</a></li>
+    
+    <li><a href="/posts/connecting-to-github-securely/"><span class="date">[ 2023-07-30 ]</span> connecting to github securely</a></li>
+    
+  </ul>
+</nav>
+
+
+<div class="home">
+  <a href="/">浪人</a>
+</div>
+
+</div>
+
+  </body>
+</html>

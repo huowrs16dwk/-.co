@@ -19,6 +19,8 @@
 
 /posts/hybrid-cloud-mailserver/
 
+/posts/getting-started-with-gpg-and-git-crypt/
+
 /bundle.css
 
 /
