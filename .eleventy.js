@@ -1,4 +1,16 @@
+const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
+
 module.exports = function (eleventyConfig) {
+  eleventyConfig.addPlugin(syntaxHighlight, {
+    errorOnInvalidLanguage: true,
+    languages: ["batch"],
+    preAttributes: { tabindex: "0" },
+    init({ Prism }) {
+      // Prism calls this language "batch", while many Markdown authors use "cmd".
+      Prism.languages.cmd = Prism.languages.batch;
+    },
+  });
+
   eleventyConfig.addCollection("posts", function (collectionApi) {
     return collectionApi.getFilteredByGlob("posts/*.md");
   });

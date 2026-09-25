@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!env bash
 
 echo "---
 layout: post

@@ -6,6 +6,7 @@
     "new": "bash ./template.sh"
   },
   "dependencies": {
-    "@11ty/eleventy": "latest"
+    "@11ty/eleventy": "latest",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2"
   }
 }

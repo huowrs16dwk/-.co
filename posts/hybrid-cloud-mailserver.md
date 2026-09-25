@@ -17,7 +17,7 @@ Outbound traffic will not work until after nat is enabled on the cloud server.
 
 Example local server wg0.conf
 
-```text
+```plaintext
 [Interface]
 PrivateKey = <local_server_private_key>
 Address = 10.8.0.2/24
