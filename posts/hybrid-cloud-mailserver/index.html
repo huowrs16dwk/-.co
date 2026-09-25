@@ -20,73 +20,67 @@ This assumes the cloud server is <code>10.8.0.1</code> and the local server is <
 By setting allowed ips to <code>0.0.0.0/0</code> it will use the server as the default gateway.
 Outbound traffic will not work until after nat is enabled on the cloud server.</p>
 <p>Example local server wg0.conf</p>
-<pre><code class="language-text">[Interface]
-PrivateKey = &lt;local_server_private_key&gt;
+<pre class="language-plaintext" tabindex="0"><code class="language-plaintext">[Interface]
+PrivateKey = &lt;local_server_private_key>
 Address = 10.8.0.2/24
 
 [Peer]
-PublicKey = &lt;cloud_server_public_key&gt;
+PublicKey = &lt;cloud_server_public_key>
 AllowedIPs = 0.0.0.0/0
-Endpoint = &lt;cloud_server_public_ip&gt;:51820
-PersistentKeepalive = 25
-</code></pre>
+Endpoint = &lt;cloud_server_public_ip>:51820
+PersistentKeepalive = 25</code></pre>
 <p>Connect the wireguard tunnel on cloud and local servers.  The local server outbound traffic won't work until after the next step.</p>
-<pre><code class="language-bash">systemctl enable --now wg-quick@wg0
-</code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash">systemctl <span class="token builtin class-name">enable</span> <span class="token parameter variable">--now</span> wg-quick@wg0</code></pre>
 <p>Enable forwarding on the cloud server, this allows nat/masquerading to work with iptables.</p>
-<pre><code class="language-bash"># cloud server
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># cloud server</span>
 
-echo &quot;net.ipv4.ip_forward = 1&quot; | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p
-</code></pre>
+<span class="token builtin class-name">echo</span> <span class="token string">"net.ipv4.ip_forward = 1"</span> <span class="token operator">|</span> <span class="token function">sudo</span> <span class="token function">tee</span> <span class="token parameter variable">-a</span> /etc/sysctl.conf
+<span class="token function">sudo</span> <span class="token function">sysctl</span> <span class="token parameter variable">-p</span></code></pre>
 <p>Setup firewall rules to forward mail server ports.
 At least http is needed for acme certificate requests, but https can be skipped.</p>
-<pre><code class="language-bash"># cloud server
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># cloud server</span>
 
-apt install -y iptables iptables-persistent
+<span class="token function">apt</span> <span class="token function">install</span> <span class="token parameter variable">-y</span> iptables iptables-persistent
 
-# forward inbound mail server ports to wireguard peer
+<span class="token comment"># forward inbound mail server ports to wireguard peer</span>
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 465 -j DNAT --to-destination 10.8.0.2:465
-iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 465 -d 10.8.0.2 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> PREROUTING <span class="token parameter variable">-i</span> eth0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">465</span> <span class="token parameter variable">-j</span> DNAT --to-destination <span class="token number">10.8</span>.0.2:465
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> wg0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">465</span> <span class="token parameter variable">-d</span> <span class="token number">10.8</span>.0.2 <span class="token parameter variable">-j</span> MASQUERADE
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 587 -j DNAT --to-destination 10.8.0.2:587
-iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 587 -d 10.8.0.2 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> PREROUTING <span class="token parameter variable">-i</span> eth0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">587</span> <span class="token parameter variable">-j</span> DNAT --to-destination <span class="token number">10.8</span>.0.2:587
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> wg0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">587</span> <span class="token parameter variable">-d</span> <span class="token number">10.8</span>.0.2 <span class="token parameter variable">-j</span> MASQUERADE
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 993 -j DNAT --to-destination 10.8.0.2:993
-iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 993 -d 10.8.0.2 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> PREROUTING <span class="token parameter variable">-i</span> eth0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">993</span> <span class="token parameter variable">-j</span> DNAT --to-destination <span class="token number">10.8</span>.0.2:993
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> wg0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">993</span> <span class="token parameter variable">-d</span> <span class="token number">10.8</span>.0.2 <span class="token parameter variable">-j</span> MASQUERADE
 
-# forward web ports for acme certificate renewal
+<span class="token comment"># forward web ports for acme certificate renewal</span>
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.8.0.2:80
-iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 80 -d 10.8.0.2 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> PREROUTING <span class="token parameter variable">-i</span> eth0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">80</span> <span class="token parameter variable">-j</span> DNAT --to-destination <span class="token number">10.8</span>.0.2:80
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> wg0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">80</span> <span class="token parameter variable">-d</span> <span class="token number">10.8</span>.0.2 <span class="token parameter variable">-j</span> MASQUERADE
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j DNAT --to-destination 10.8.0.2:443
-iptables -t nat -A POSTROUTING -o wg0 -p tcp --dport 443 -d 10.8.0.2 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> PREROUTING <span class="token parameter variable">-i</span> eth0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">443</span> <span class="token parameter variable">-j</span> DNAT --to-destination <span class="token number">10.8</span>.0.2:443
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> wg0 <span class="token parameter variable">-p</span> tcp <span class="token parameter variable">--dport</span> <span class="token number">443</span> <span class="token parameter variable">-d</span> <span class="token number">10.8</span>.0.2 <span class="token parameter variable">-j</span> MASQUERADE
 
-# allow as default outbound gateway
+<span class="token comment"># allow as default outbound gateway</span>
 
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables <span class="token parameter variable">-t</span> nat <span class="token parameter variable">-A</span> POSTROUTING <span class="token parameter variable">-o</span> eth0 <span class="token parameter variable">-j</span> MASQUERADE
 
-# save firewall rules
+<span class="token comment"># save firewall rules</span>
 
-netfilter-persistent save
-</code></pre>
+netfilter-persistent save</code></pre>
 <p>At this point we effectively have our own custom vpn service, you should see your cloud ip for any outbound activity from the local server</p>
-<pre><code class="language-bash"># from local server
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># from local server</span>
 
-curl ifconfig.me
-# should print cloud server ip
-</code></pre>
+<span class="token function">curl</span> ifconfig.me
+<span class="token comment"># should print cloud server ip</span></code></pre>
 <p>Next, setup mailcow on the local server. Boot it up then add your domains and configure dns as appropriate.</p>
-<pre><code class="language-bash"># local server
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># local server</span>
 
-git clone https://github.com/mailcow/mailcow-dockerized
-cd mailcow-dockerized
+<span class="token function">git</span> clone https://github.com/mailcow/mailcow-dockerized
+<span class="token builtin class-name">cd</span> mailcow-dockerized
 ./generate_config.sh
 
-docker compose up -d
-</code></pre>
+<span class="token function">docker</span> compose up <span class="token parameter variable">-d</span></code></pre>
 <p>The easydmarc <a href="https://easydmarc.com/tools/dmarc-record-generator">dmarc generator</a> and <a href="https://easydmarc.com/tools/spf-record-generator">spf record generator</a> tools are useful when setting up dns.</p>
 
 
@@ -100,6 +94,8 @@ docker compose up -d
 
 <nav>
   <ul>
+    
+    <li><a href="/posts/trustfall/"><span class="date">[ 2026-09-25 ]</span> trustfall walkthrough</a></li>
     
     <li><a href="/posts/getting-started-with-gpg-and-git-crypt/"><span class="date">[ 2024-07-27 ]</span> getting started with gpg and git-crypt</a></li>
     

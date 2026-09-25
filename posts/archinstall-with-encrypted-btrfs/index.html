@@ -49,12 +49,11 @@ I like to use <a href="https://www.ventoy.net/en/download.html">ventoy</a>.</p>
 <p>Then choose <code>install</code>. If you don't choose the options above it is highly likely it will blow up midway through. When it prompts you at the end to enter the environment select <code>yes</code></p>
 <h2>post-install cleanup</h2>
 <p>Now we have some cleanup to do.  First things first, we need to set the correct uuid for the primary disk in the grub configuration.</p>
-<pre><code class="language-bash"># append the block id info to the end of the grub template as commentary
-blkid | sed 's/^/#/' &gt;&gt; /etc/default/grub
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># append the block id info to the end of the grub template as commentary</span>
+blkid <span class="token operator">|</span> <span class="token function">sed</span> <span class="token string">'s/^/#/'</span> <span class="token operator">>></span> /etc/default/grub
 
-# edit the grub template
-vim /etc/default/grub
-</code></pre>
+<span class="token comment"># edit the grub template</span>
+<span class="token function">vim</span> /etc/default/grub</code></pre>
 <p>If you've never used vim before, let's take this as an opportunity to learn a little now.
 Jump to the end of the file with <code>G</code> you'll find the UUID info for the drives you have installed.  In my case I have two partitions <code>/dev/sda1</code> which is my EFI boot partition and <code>/dev/sda2</code> which is the luks volume.
 Navigate to the UUID value for <code>/dev/sda2</code> and yank it to register 0 with <code>y9w</code>.
@@ -64,33 +63,32 @@ When you are done press <code>ESC</code> then use <code>:x</code> to write the f
 <p>That changes the template, but that does not fix the actual grub configuration.  Now we need to regenerate the grub config.
 Since we want to take advantage of snapshots anyway, we may as well just set that up now.</p>
 <p>The easiest way to have automatic snapshots with rollbacks is with the <a href="https://aur.archlinux.org/packages/snap-pac-grub">snap-pac-grub</a> AUR package.  Let's install that now.  I like to use <a href="https://aur.archlinux.org/packages/yay">yay</a> for managing AUR packages.  Unfortnately <code>makepkg</code> won't let you bulid as root, so we'll need to create a user first.</p>
-<pre><code class="language-bash"># install git and golang
-pacman -S git go
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># install git and golang</span>
+pacman <span class="token parameter variable">-S</span> <span class="token function">git</span> go
 
-# create a local user
-useradd -m -U -G wheel yourusername
-passwd yourusername
+<span class="token comment"># create a local user</span>
+<span class="token function">useradd</span> <span class="token parameter variable">-m</span> <span class="token parameter variable">-U</span> <span class="token parameter variable">-G</span> wheel yourusername
+<span class="token function">passwd</span> yourusername
 
-# allow user sudo access
+<span class="token comment"># allow user sudo access</span>
 visudo
-# jump to the &quot;%wheel&quot; entry with `/wheel` then navigate to the `#` and delete it with `x`
-# save and quit with `ESC` then `:x`
+<span class="token comment"># jump to the "%wheel" entry with `/wheel` then navigate to the `#` and delete it with `x`</span>
+<span class="token comment"># save and quit with `ESC` then `:x`</span>
 
-# login as that user
-su - yourusername
+<span class="token comment"># login as that user</span>
+<span class="token function">su</span> - yourusername
 
-# install yay
-git clone https://aur.archlinux.org/yay.git
-cd yay
+<span class="token comment"># install yay</span>
+<span class="token function">git</span> clone https://aur.archlinux.org/yay.git
+<span class="token builtin class-name">cd</span> yay
 makepkg
-makepkg -i
+makepkg <span class="token parameter variable">-i</span>
 
-# use yay to install snap-pac-grub
-yay -S snap-pac-grub
+<span class="token comment"># use yay to install snap-pac-grub</span>
+yay <span class="token parameter variable">-S</span> snap-pac-grub
 
-# logout (back to root user)
-exit
-</code></pre>
+<span class="token comment"># logout (back to root user)</span>
+<span class="token builtin class-name">exit</span></code></pre>
 <p>You can ignore the library error, it's because snapper isn't setup yet. We will fix that after we reboot. Don't forget to eject the arch iso before rebooting.</p>
 <pre><code>shutdown -r now
 </code></pre>
@@ -118,6 +116,8 @@ exit
 
 <nav>
   <ul>
+    
+    <li><a href="/posts/trustfall/"><span class="date">[ 2026-09-25 ]</span> trustfall walkthrough</a></li>
     
     <li><a href="/posts/getting-started-with-gpg-and-git-crypt/"><span class="date">[ 2024-07-27 ]</span> getting started with gpg and git-crypt</a></li>
     

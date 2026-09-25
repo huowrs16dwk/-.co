@@ -21,6 +21,8 @@
 
 /posts/getting-started-with-gpg-and-git-crypt/
 
+/posts/trustfall/
+
 /bundle.css
 
 /

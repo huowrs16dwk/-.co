@@ -14,26 +14,23 @@
 
 <h1>practical nix flakes</h1>
 <p>If you are running nixos, you already have the nix build system.  Otherwise, you'll need to install it</p>
-<pre><code class="language-bash">curl -L https://nixos.org/nix/install | sh
-</code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token function">curl</span> <span class="token parameter variable">-L</span> https://nixos.org/nix/install <span class="token operator">|</span> <span class="token function">sh</span></code></pre>
 <p>Now you'll need to enable flakes</p>
-<pre><code class="language-bash">mkdir -p ~/.config/nix
-echo &quot;experimental-features = nix-command flakes&quot; &gt; ~/.config/nix/nix.conf
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token function">mkdir</span> <span class="token parameter variable">-p</span> ~/.config/nix
+<span class="token builtin class-name">echo</span> <span class="token string">"experimental-features = nix-command flakes"</span> <span class="token operator">></span> ~/.config/nix/nix.conf
 
-# now nix flake command should work
-nix flake --help
-</code></pre>
+<span class="token comment"># now nix flake command should work</span>
+nix flake <span class="token parameter variable">--help</span></code></pre>
 <p>For setup, that's pretty much all you need to do.  If you already have a project with a working <code>flake.nix</code>
 file then you are off to the races.</p>
-<pre><code class="language-bash"># build the default target
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># build the default target</span>
 nix build
 
-# enter quick shell with dependencies available
+<span class="token comment"># enter quick shell with dependencies available</span>
 nix shell
 
-# enter development shell for reproducable builds
-nix develop
-</code></pre>
+<span class="token comment"># enter development shell for reproducable builds</span>
+nix develop</code></pre>
 <p>But what if you don't have a flake file yet?  Here are some examples for various programming languages.</p>
 <h2>ruby</h2>
 <p>To generate the gemset.nix you'll need to use bundix:  <code>nix-shell -p bundix</code></p>
@@ -396,12 +393,11 @@ nix develop
 }
 </code></pre>
 <p>The arm target can be compiled by specifying the target</p>
-<pre><code class="language-bash"># build for x86
-nix build .\#my-cpp-app
+<pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token comment"># build for x86</span>
+nix build .<span class="token punctuation">\</span>#my-cpp-app
 
-# build for arm
-nix build .\#my-cpp-app-aarch64
-</code></pre>
+<span class="token comment"># build for arm</span>
+nix build .<span class="token punctuation">\</span>#my-cpp-app-aarch64</code></pre>
 
 
 </article>
@@ -414,6 +410,8 @@ nix build .\#my-cpp-app-aarch64
 
 <nav>
   <ul>
+    
+    <li><a href="/posts/trustfall/"><span class="date">[ 2026-09-25 ]</span> trustfall walkthrough</a></li>
     
     <li><a href="/posts/getting-started-with-gpg-and-git-crypt/"><span class="date">[ 2024-07-27 ]</span> getting started with gpg and git-crypt</a></li>
     
